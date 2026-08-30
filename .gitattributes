@@ -1,0 +1,10 @@
+# Preserve third-party source snapshots and license notices byte-for-byte.
+assets-src/vendor/kenney-input-prompts/SOURCE-PAGE.html -text -diff
+assets-src/vendor/kenney-input-prompts/LICENSE.txt -text -diff
+assets-src/vendor/google-fonts-ui/OFL-NotoSansKR.txt -text -diff
+assets-src/vendor/google-fonts-ui/OFL-Oxanium.txt -text -diff
+
+# Runtime media are binary assets.
+src/assets/**/*.png binary
+src/assets/**/*.woff2 binary
+assets-src/vendor/**/*.png binary

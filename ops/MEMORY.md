@@ -14,7 +14,11 @@
 |---|---|---|---|
 | MEM-001 | 플레이 가능 빌드는 `render_game_to_text`와 `advanceTime` 계약을 유지한다. | [아키텍처](../docs/game/ARCHITECTURE.md) | 2026-08-30 |
 | MEM-002 | 변경 완료는 타입 검사와 빌드만으로 판단하지 않고 입력·상태·스크린샷을 함께 확인한다. | [검증 규약](../docs/game/TESTING.md) | 2026-08-30 |
-| MEM-003 | 현재 Signal Courier는 최종 제품이 아니라 하네스 검증용 교체 가능한 수직 조각이다. | [게임 브리프](../docs/game/GAME-BRIEF.md) | 2026-08-30 |
+| MEM-003 | Signal Courier는 중계기 사슬을 구축하고 패킷을 회수·업로드한 뒤 10분 안에 귀환하는 2D 탑다운 액션·경로 설계 로그라이트로 확정됐다. | [게임 브리프](../docs/game/GAME-BRIEF.md) | 2026-08-30 |
+| MEM-004 | MVP는 Vite·TypeScript·Canvas 2D와 런타임 의존성 0개를 유지하고, 순수 60Hz 시뮬레이션 코어를 브라우저 어댑터와 분리한다. | [기술 계획](../docs/preproduction/TECHNICAL-PLAN.md) | 2026-08-30 |
+| MEM-005 | 핵심 시각 자산은 직접 제작하며 외부 자산은 CC0/OFL 보조 파일만 출처·라이선스·해시·변환을 기록한 뒤 편입한다. | [아트·에셋 계획](../docs/preproduction/ART-ASSET-PLAN.md) | 2026-08-30 |
+| MEM-006 | 비코드 작업은 Codex가 수행하고 코드 구현은 Claude 접근 가능 시 우선하며, 불가하면 Codex로 전환한다. Gemini는 사용하지 않는다. | [프로젝트 헌장](CHARTER.md) | 2026-08-30 |
+| MEM-007 | M1 코어는 `GameState + InputFrame -> stepGame`의 60Hz 순수 시뮬레이션과 브라우저 어댑터를 분리하며, 동일 seed·입력 10회와 실제 Playwright 흐름으로 결정론과 화면을 함께 검증한다. | [M1 작업 기록](tasks/TASK-20260830-03.md) | 2026-08-30 |
 
 ## Stale
 
@@ -25,4 +29,3 @@
 
 | ID | 항목 | 보관일 | 대체 항목·사유 |
 |---|---|---|---|
-

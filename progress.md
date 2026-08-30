@@ -16,4 +16,32 @@ Original prompt: https://github.com/ImGdevel/Hermes-Agent 이 에이전트를 �
 - 헤드리스 Chromium이 기본 `Escape` 전체 화면 종료를 수행하지 않아, 게임 키 처리에서 `document.exitFullscreen()`을 명시적으로 호출하도록 보강했다.
 - 최종 검증: `npm run check`, `npm run build`, `npm run test:game` 성공. 메뉴→플레이, 이동, 일시정지, 재시작, 전체 화면 진입/종료, 승리 5/5, 시간 초과 0.0을 확인했고 브라우저 오류는 없었다.
 - 메뉴·승리·실패 및 플레이 중 노드 수집 스크린샷을 직접 검토했다. 텍스트 상태와 화면이 일치하며 잘림이나 누락이 없다.
-- TODO: 프로젝트 소유자와 최종 게임 장르, 카메라, 한 판 길이, 플랫폼, 아트 방향 결정.
+- Orca Run `run_00fded89311d`에서 게임 기획, 기술, 아트·에셋 역할을 분리해 병렬 조사했다.
+- Signal Courier를 10분 하드 캡의 2D 탑다운 액션·경로 설계 로그라이트로 확정했다. 패킷 2개는 부분 탈출, 3개는 완전 탈출이며 중계기 사슬이 업로드·전투·귀환을 함께 바꾼다.
+- Canvas 직접 구현, Phaser, PixiJS, Godot Web을 비교하고 MVP는 Vite·TypeScript·Canvas 2D와 런타임 의존성 0개를 유지하기로 했다. Vitest만 M1 개발 의존성으로 추가한다.
+- 고정 tick, seed PRNG, 입력 프레임, canonical hash, 순수 코어/브라우저 어댑터 분리와 단계별 테스트·성능 예산을 확정했다.
+- 어두운 폐도시와 청록 연결·주황 플레이어·자홍 교란·백색 데이터의 기능 팔레트를 확정했다. 핵심 그래픽은 직접 제작하고 CC0/OFL 보조 자산만 추적 편입한다.
+- Kenney 입력 글리프·효과음, Oxanium, Noto Sans KR, CC0 임시 음악을 다운로드 후보로 잠갔다. 사전 제작 중 바이너리는 받지 않았고 M1 라이선스 게이트 뒤 필요한 파일만 편입한다.
+- 에이전트 정책을 비코드 Codex, 코드 Claude 우선·접근 불가 시 Codex 전환, Gemini 미사용으로 확정했다.
+- 제품 브리프, 헌장, 아키텍처와 M1 작업 기록을 실제 게임 기준으로 갱신했다.
+- 최종 회귀 검증에서 `npm run check`, `npm run build`, 프리뷰 서버 기반 `npm run test:game`, `git diff --check`가 성공했다. 첫 브라우저 테스트는 서버 미실행으로 거부됐고 서버를 시작한 뒤 동일 테스트가 통과했다.
+- TODO: `TASK-20260830-03`을 시작해 Claude 접근을 확인하고 M1 구조 보존 단계부터 진행한다.
+- `TASK-20260830-03`을 Doing으로 이동했다. 구현은 Claude 접근 가능 시 우선하고, 실패하면 Codex로 즉시 전환한다.
+- Vitest 4.x의 Node 환경·설정·테스트 분리 방식을 Context7 공식 문서에서 재확인했다.
+- `TASK-20260830-03` M1 구현에서 `src/game/`을 순수 코어·runtime·browser adapter·debug 경계로 분리했다. 코어는 DOM/Canvas/AudioContext/performance API를 import하지 않고 `GameState + InputFrame -> stepGame`만으로 실행된다.
+- 60Hz 잔여 시간 accumulator, 0ms 무변경, uint32 seed PRNG, 정수 tick, 고정 필드 canonical serializer와 FNV-1a hash를 구현했다. 동일 seed/입력을 10회 재생하는 Vitest가 단일 hash를 확인한다.
+- 120초 M1 흐름에 8방향 이동, Space 대시/무적, 마우스 조준 과열식 사격, 우클릭 EMP, 추격자·사수, E 1초 중계기 설치, 패킷 접촉 회수, E 3초 업로드를 연결했다.
+- 사수 탄환이 중계기를 맞히면 정상 청록 실선→교란 자홍 짧은 파선→단절 회색 긴 파선으로 전이하고, E 2초 수리 및 EMP 교란 해제가 실제 상태와 화면에 함께 반영된다. 활성 반경은 무기 냉각과 대시 재충전을 가속한다.
+- 첫 링크 수리 브라우저 검증에서 체력은 복구됐지만 이전 `jammedTicks`가 남아 다음 tick에 다시 교란되는 결함을 발견했다. 수리 완료 시 교란 timer를 함께 초기화하고 다음 tick까지 보는 회귀 테스트로 고정했다.
+- 기능 팔레트와 전달자·추격자·사수·본부·소켓·중계기·패킷 실루엣, 사수 조준선, EMP 링, 대시 잔상, 업로드/설치/수리 진행 링, 링크 3상태 범례를 Canvas 도형으로 직접 제작했다.
+- Kenney Input Prompts 1.5의 필요한 글리프 11개와 Google Fonts 공식 CSS API의 Oxanium/Noto Sans KR UI WOFF2 subset만 편입했다. `assets-src/vendor/`, `docs/licenses/ASSET-MANIFEST.yml`, `CREDITS.md`에 원출처·라이선스·원본/파일 hash·선택·변환·runtime 매핑을 기록했다.
+- 외부 음악은 M1 판독 검증에 필요하지 않아 넣지 않았고, 네트워크·전투 사건음은 Web Audio 절차 합성 adapter로 번들 자산 없이 구분했다.
+- `npm run check`, Vitest 4개 파일 8개 테스트, `npm run build`, `npm run test:game`이 통과했다. 브라우저 검증 hash는 menu `3aa83187`, upload 완료 `5127f0e2`, 수리 완료 `c30733df`였고 console/page error는 0개였다.
+- 공용 `develop-web-game` Playwright client로 Enter→이동→대시를 재검증했다. 최종 상태는 tick 84, player x=413.0, dash cooldown 0.9초였고 최신 screenshot을 직접 열어 소켓 설치 안내와 사수 예고선이 상태 JSON과 일치함을 확인했다.
+- 전용 Playwright에서 순간이동/점수 변경 없이 실제 키·pointer로 이동·대시·사격·EMP·일시정지·재시작·전체 화면·설치·회수·업로드·교란·단절·수리를 끝까지 실행했다. 960×540/1280×720/1920×1080 메뉴, 온라인/교란/단절/수리, 패킷 운반 교전, 업로드 결과, reduced-motion screenshot을 직접 검토했고 잘림·핵심 누락이 없었다.
+- 관련 `docs/game/`, README, 컨트롤과 검증 절차를 실제 M1 빌드에 맞췄다. dispatch 제약에 따라 `ops/BOARD.md`와 `ops/tasks/TASK-20260830-03.md` 상태·내용은 수정하지 않았고 커밋하지 않았다.
+- TODO: 완료 조건의 “신규 테스트 5명 중 4명”은 실제 참여자가 필요한 제품 검증이므로 코디네이터가 별도 플레이테스트로 기록해야 한다. 자동화·기술 종료 게이트는 모두 통과했다.
+- 코디네이터 독립 재검증에서 `npm run verify`가 Vitest 4개 파일 9개 테스트와 전체 Playwright 흐름을 다시 통과했고 `npm audit --audit-level=high`는 취약점 0건이었다. 공용 `develop-web-game` 클라이언트의 실제 입력 상태 hash `82fc2c74`와 screenshot도 직접 대조했다.
+- 독립 코드 검토에서 사망과 마지막 업로드 tick이 겹치면 패배가 승리로 덮일 수 있는 순서를 발견해 terminal mode에서 즉시 step을 종료하고 회귀 테스트를 추가했다. reduced-motion 설정에서는 교란 링크 dash offset과 중계기 맥동도 정지하도록 보완했다.
+- 운영 상태는 기술 구현 완료를 반영해 `TASK-20260830-03`을 Review로 이동했다. 실제 신규 플레이어 5명 중 4명 무설명 성공 기준은 자동화로 대체하지 않고 미완료로 유지한다.
+- 독립 리뷰의 나머지 지적도 반영했다. Vite 8 공식 문서를 Context7로 확인해 `base: "./"`와 build asset emission을 적용하고, `test:build`가 생산 HTML 상대 URL 및 `dist/licenses/` 고지 5개의 원본 byte 일치를 검증한다. 실제 과열 assertion, 폰트 byte 크기 manifest, README 에셋 경계도 보강했으며 최종 `npm run verify`가 통과했다.

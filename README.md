@@ -15,7 +15,9 @@ npm run dev
 
 ```bash
 npm run check
+npm run test:unit
 npm run build
+npm run test:build
 npm run preview
 ```
 
@@ -29,9 +31,13 @@ npm run test:game
 
 ## 현재 레퍼런스 게임
 
-`Signal Courier`는 워크스페이스 검증을 위한 교체 가능한 마이크로게임입니다. 제한 시간 안에 신호 노드 5개를 모두 수집하면 승리합니다.
+`Signal Courier` M1은 2분 안에 전투 공간을 확보하고 중계기 1개를 설치한 뒤 패킷 1개를 회수·업로드하는 코어 증명 빌드입니다.
 
 - 이동: `WASD` 또는 방향키
+- 조준·사격: 마우스 이동·왼쪽 버튼
+- 대시: `Space`
+- EMP: 마우스 오른쪽 버튼
+- 중계기 설치·업로드·수리: `E` 길게 누르기
 - 시작: `Enter`
 - 일시정지: `P`
 - 재시작: `R`
@@ -62,7 +68,9 @@ flowchart LR
 | 경로 | 역할 |
 |---|---|
 | `src/` | 게임 코드와 스타일 |
-| `public/assets/` | 번들 변환이 필요 없는 게임 에셋 |
+| `src/assets/` | Vite 그래프에 포함되는 런타임 글꼴·입력 글리프와 manifest |
+| `assets-src/vendor/` | 외부 에셋 원출처·라이선스·해시·선택 원본 기록 |
+| `docs/licenses/` | 크레딧과 배포 에셋 manifest; 빌드 시 `dist/licenses/`에도 포함 |
 | `docs/game/` | 게임 브리프, 조작, 아키텍처, 검증 규약 |
 | `ops/CHARTER.md` | 목표, 범위, 성공 기준 |
 | `ops/BOARD.md` | 현재 작업의 단일 현황판 |

@@ -1,0 +1,34 @@
+schemaVersion: 1
+updatedAt: 2026-08-30
+distribution: Vite build emits this manifest, credits, Kenney CC0 notice, and both OFL texts to dist/licenses; scripts/verify-build.mjs checks byte equality
+assets:
+  - id: kenney-input-prompts
+    provider: Kenney
+    source: https://kenney.nl/assets/input-prompts
+    version: "1.5"
+    license: CC0-1.0
+    licenseFile: assets-src/vendor/kenney-input-prompts/LICENSE.txt
+    sourceRecord: assets-src/vendor/kenney-input-prompts/SOURCE.json
+    sha256Record: assets-src/vendor/kenney-input-prompts/SHA256.txt
+    runtimeGlob: src/assets/input/*.png
+    transformation: selected 11 required 64x64 PNG glyphs; bytes unchanged; kebab-case runtime rename
+  - id: oxanium-ui-subset
+    provider: Google Fonts / The Oxanium Project Authors
+    source: https://fonts.google.com/specimen/Oxanium
+    version: "v21"
+    license: OFL-1.1
+    licenseFile: assets-src/vendor/google-fonts-ui/OFL-Oxanium.txt
+    sourceRecord: assets-src/vendor/google-fonts-ui/SOURCE.json
+    sha256: 8388f18249611dbb369c18b44a6c5b73cb7a83955b32aa40cd460a7cde9d068e
+    runtimeFile: src/assets/fonts/oxanium-ui-500-600.woff2
+    transformation: official CSS API text subset; returned WOFF2 bytes unchanged
+  - id: noto-sans-kr-ui-subset
+    provider: Google Fonts / Adobe
+    source: https://fonts.google.com/noto/specimen/Noto+Sans+KR
+    version: "v39"
+    license: OFL-1.1
+    licenseFile: assets-src/vendor/google-fonts-ui/OFL-NotoSansKR.txt
+    sourceRecord: assets-src/vendor/google-fonts-ui/SOURCE.json
+    sha256: 7c11fac8b7df091677340d1e8b243793efafd5fa240cff8f7fe9e9f37ac02665
+    runtimeFile: src/assets/fonts/noto-sans-kr-ui-400-600.woff2
+    transformation: official CSS API text subset; returned WOFF2 bytes unchanged

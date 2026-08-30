@@ -1,0 +1,27 @@
+{
+  "id": "google-fonts-ui-subsets",
+  "title": "Oxanium and Noto Sans KR UI subsets",
+  "creator": "The Oxanium Project Authors; Adobe",
+  "sourceUrl": "https://fonts.google.com/",
+  "retrievedAt": "2026-08-30",
+  "version": "Oxanium v21; Noto Sans KR v39",
+  "license": "OFL-1.1",
+  "licenseUrl": "https://openfontlicense.org/open-font-license-official-text/",
+  "attributionRequired": true,
+  "commercialUse": true,
+  "modificationAllowed": true,
+  "selectedFiles": [
+    "Google Fonts CSS text subset for Oxanium 500-600",
+    "Google Fonts CSS text subset for Noto Sans KR 400-600"
+  ],
+  "runtimeFiles": [
+    "src/assets/fonts/oxanium-ui-500-600.woff2",
+    "src/assets/fonts/noto-sans-kr-ui-400-600.woff2"
+  ],
+  "transformations": [
+    "Requested only glyphs used by the M1 Canvas UI through the official Google Fonts CSS API text parameter.",
+    "Stored the returned WOFF2 bytes unchanged and declared the supported weight ranges locally."
+  ],
+  "sourceResponseSha256": "425099f1f049c9cb7936f7732a809a6525eccda4a62b55af5219f5468bf146ef",
+  "archiveSha256": "425099f1f049c9cb7936f7732a809a6525eccda4a62b55af5219f5468bf146ef"
+}

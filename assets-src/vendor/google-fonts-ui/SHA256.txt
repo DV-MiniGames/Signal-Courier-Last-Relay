@@ -1,0 +1,5 @@
+425099f1f049c9cb7936f7732a809a6525eccda4a62b55af5219f5468bf146ef  google-fonts-subset-source.css
+7c11fac8b7df091677340d1e8b243793efafd5fa240cff8f7fe9e9f37ac02665  ../../../../src/assets/fonts/noto-sans-kr-ui-400-600.woff2
+8388f18249611dbb369c18b44a6c5b73cb7a83955b32aa40cd460a7cde9d068e  ../../../../src/assets/fonts/oxanium-ui-500-600.woff2
+1c05c68c34f9708415aada51f17e1b0092d2cea709bf4a94cd38114f9e73d7d9  OFL-NotoSansKR.txt
+fe17c0f2581d71b4e1ea7e636e7f4877c29223e11bb1dd1a871e8c3f2a86336b  OFL-Oxanium.txt

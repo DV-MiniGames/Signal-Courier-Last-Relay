@@ -1,0 +1,45 @@
+{
+  "id": "kenney-input-prompts",
+  "title": "Input Prompts",
+  "creator": "Kenney",
+  "sourceUrl": "https://kenney.nl/assets/input-prompts",
+  "downloadUrl": "https://kenney.nl/media/pages/assets/input-prompts/8de120163f-1783763952/kenney_input-prompts_1.5.zip",
+  "retrievedAt": "2026-08-30",
+  "version": "1.5",
+  "license": "CC0-1.0",
+  "licenseUrl": "https://creativecommons.org/publicdomain/zero/1.0/",
+  "attributionRequired": false,
+  "commercialUse": true,
+  "modificationAllowed": true,
+  "selectedFiles": [
+    "Keyboard & Mouse/Default/keyboard_w_outline.png",
+    "Keyboard & Mouse/Default/keyboard_a_outline.png",
+    "Keyboard & Mouse/Default/keyboard_s_outline.png",
+    "Keyboard & Mouse/Default/keyboard_d_outline.png",
+    "Keyboard & Mouse/Default/keyboard_e_outline.png",
+    "Keyboard & Mouse/Default/keyboard_space_outline.png",
+    "Keyboard & Mouse/Default/keyboard_f_outline.png",
+    "Keyboard & Mouse/Default/keyboard_escape_outline.png",
+    "Keyboard & Mouse/Default/mouse_left_outline.png",
+    "Keyboard & Mouse/Default/mouse_right_outline.png",
+    "Keyboard & Mouse/Default/mouse_move.png"
+  ],
+  "runtimeFiles": [
+    "src/assets/input/input-key-w.png",
+    "src/assets/input/input-key-a.png",
+    "src/assets/input/input-key-s.png",
+    "src/assets/input/input-key-d.png",
+    "src/assets/input/input-key-e.png",
+    "src/assets/input/input-key-space.png",
+    "src/assets/input/input-key-f.png",
+    "src/assets/input/input-key-escape.png",
+    "src/assets/input/input-mouse-left.png",
+    "src/assets/input/input-mouse-right.png",
+    "src/assets/input/input-mouse-move.png"
+  ],
+  "transformations": [
+    "Selected the 11 required 64x64 PNG glyphs from the official archive.",
+    "Copied bytes unchanged and renamed runtime files to lowercase kebab-case."
+  ],
+  "archiveSha256": "ac2fcf599080b0f3ba2d174c9474db6df1a0e96ff0662580e2da79a122ab78a1"
+}

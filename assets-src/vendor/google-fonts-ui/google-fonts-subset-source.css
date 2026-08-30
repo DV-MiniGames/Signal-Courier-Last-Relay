@@ -1,0 +1,32 @@
+@font-face {
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/l/font?kit=PbykFmXiEBPT4ITbgNA5Cgm202x56rI5l1cC_BFFbYL3zE8aJKK7JBEO8AbejvawZdM0zUHqoV83Fim_jHU1cUYtGhZ5wQqICYaPxmziW_KvB7O4CFvmDRb7ms_NthUEwuD0FhB_PbTPpeb_11kGqsYR0HSJeVqU7RXVCqRifis1TNhLug7yUwre0L70a2bwBeq2oHBso9IQdZK7puSyIEjweNN1_Op6UBtKX5RSjLeGeG9NKgK21lXkH_g0I5N1nqfBtYOA8SizGayytUj3z-3D8yzxkst6LhRNLaBwAWsyEai0CQxOqosK-_5-ZzLVwL9VGmFTrLIrv-aRfNrKQksv0UTq4kUX6GrZuR-yB7JqdgZaq0HeFq3b4u8i22bGfBzoXGwmOA&skey=87e7ee645936e2c7&v=v39) format('woff2');
+  unicode-range: U+20, U+2d-2e, U+30-3a, U+41-5a, U+61-7a, U+ac04, U+ac19, U+ac8c, U+aca9, U+acc4, U+ace0, U+ad50, U+ad6c, U+ae30, U+ae34, U+ae38, U+b20c, U+b2e8, U+b300, U+b3d9, U+b4dc, U+b77c, U+b780, U+b7ec, U+b85c-b85d, U+b97c, U+b9ac, U+b9c1, U+ba74, U+bc18, U+bcf5, U+bd84, U+c0ac, U+c0c1, U+c0c9, U+c0dd, U+c120, U+c124, U+c218, U+c2dc, U+c2e4, U+c548, U+c5c5, U+c5d0, U+c694, U+c6b4, U+c740, U+c744, U+c774, U+c77c, U+c790-c791, U+c7ac, U+c804, U+c808, U+c815, U+c870, U+c874, U+c900, U+c911, U+c9c0, U+ccad, U+ccb4, U+ce58, U+d06c, U+d0b7, U+d30c, U+d328, U+d544, U+d558, U+d64d, U+d654, U+d68c;
+}
+@font-face {
+  font-family: 'Noto Sans KR';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/l/font?kit=PbykFmXiEBPT4ITbgNA5Cgm202x56rI5l1cC_BFFbYL3zE8aJKK7JBEO8AbejvawZdM0zUHqoV83Fim_jHU1cUYtGhZ5wQqICYaPxmziW_KvB7O4CFvmDRb7ms_NthUEwuD0FhB_PbTPpeb_11kGqsYR0HSJeVqU7RXVCqRifis1TNhLug7yUwre0L70a2bwBeq2oHBso9IQdZK7puSyIEjweNN1_Op6UBtKX5RSjLeGeG9NKgK21lXkH_g0I5N1nqfBtYOA8SizGayytUj3z-3D8yzxkst6LhRNLaBwAWsyEai0CQxOqosK-_5-ZzLVwL9VGmFTrLIrv-aRfNrKQksv0UTq4kUX6GrZuR-yB7JqdgZaq0HeFq3b4u8i22bGfBzoXGwmOA&skey=87e7ee645936e2c7&v=v39) format('woff2');
+  unicode-range: U+20, U+2d-2e, U+30-3a, U+41-5a, U+61-7a, U+ac04, U+ac19, U+ac8c, U+aca9, U+acc4, U+ace0, U+ad50, U+ad6c, U+ae30, U+ae34, U+ae38, U+b20c, U+b2e8, U+b300, U+b3d9, U+b4dc, U+b77c, U+b780, U+b7ec, U+b85c-b85d, U+b97c, U+b9ac, U+b9c1, U+ba74, U+bc18, U+bcf5, U+bd84, U+c0ac, U+c0c1, U+c0c9, U+c0dd, U+c120, U+c124, U+c218, U+c2dc, U+c2e4, U+c548, U+c5c5, U+c5d0, U+c694, U+c6b4, U+c740, U+c744, U+c774, U+c77c, U+c790-c791, U+c7ac, U+c804, U+c808, U+c815, U+c870, U+c874, U+c900, U+c911, U+c9c0, U+ccad, U+ccb4, U+ce58, U+d06c, U+d0b7, U+d30c, U+d328, U+d544, U+d558, U+d64d, U+d654, U+d68c;
+}
+@font-face {
+  font-family: 'Oxanium';
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/l/font?kit=RrQQboN_4yJ0JmiMS2DWRbpgQqkYKv-yCW26GEgKTPeyNskB6sB_trh09gq12UqFjNv2UxRxIsM9MH6bmt53bLuK_7jvSs9KhOCv1hZPj7uE1RyevRh_55I3tvKO1GMWVodR9vuLMA0Gkkt0JfBVQA7285W6dVgNFal0QEA8iDP3lfZwwv22budoy-ey0zYb1QQezV-h0UQDhZJIbPhIdRCTIGO8IF_Xf5mSHviKqy3o4PpzA0_DEeAVG8hTWc7_yVA-7Dz8URvtI1vfbVn6cEmijcFKsjUj0AS05cN41gj3OBXmprl6ubAETMzC-jqUSQ39RWgzNZxkjIUCDY8lLA0mmQ08icITAI9jHTFjhMSlDt3Ik3vxP9jlewfRvXIOAOA&skey=c0faa3e28022c872&v=v21) format('woff2');
+  unicode-range: U+20, U+2d-2e, U+30-3a, U+41-5a, U+61-7a, U+ac04, U+ac19, U+ac8c, U+aca9, U+acc4, U+ace0, U+ad50, U+ad6c, U+ae30, U+ae34, U+ae38, U+b20c, U+b2e8, U+b300, U+b3d9, U+b4dc, U+b77c, U+b780, U+b7ec, U+b85c-b85d, U+b97c, U+b9ac, U+b9c1, U+ba74, U+bc18, U+bcf5, U+bd84, U+c0ac, U+c0c1, U+c0c9, U+c0dd, U+c120, U+c124, U+c218, U+c2dc, U+c2e4, U+c548, U+c5c5, U+c5d0, U+c694, U+c6b4, U+c740, U+c744, U+c774, U+c77c, U+c790-c791, U+c7ac, U+c804, U+c808, U+c815, U+c870, U+c874, U+c900, U+c911, U+c9c0, U+ccad, U+ccb4, U+ce58, U+d06c, U+d0b7, U+d30c, U+d328, U+d544, U+d558, U+d64d, U+d654, U+d68c;
+}
+@font-face {
+  font-family: 'Oxanium';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url(https://fonts.gstatic.com/l/font?kit=RrQQboN_4yJ0JmiMS2DWRbpgQqkYKv-yCW26GEgKTPeyNskB6sB_trh09gq12UqFjNv2UxRxIsM9MH6bmt53bLuK_7jvSs9KhOCv1hZPj7uE1RyevRh_55I3tvKO1GMWVodR9vuLMA0Gkkt0JfBVQA7285W6dVgNFal0QEA8iDP3lfZwwv22budoy-ey0zYb1QQezV-h0UQDhZJIbPhIdRCTIGO8IF_Xf5mSHviKqy3o4PpzA0_DEeAVG8hTWc7_yVA-7Dz8URvtI1vfbVn6cEmijcFKsjUj0AS05cN41gj3OBXmprl6ubAETMzC-jqUSQ39RWgzNZxkjIUCDY8lLA0mmQ08icITAI9jHTFjhMSlDt3Ik3vxP9jlewfRvXIOAOA&skey=c0faa3e28022c872&v=v21) format('woff2');
+  unicode-range: U+20, U+2d-2e, U+30-3a, U+41-5a, U+61-7a, U+ac04, U+ac19, U+ac8c, U+aca9, U+acc4, U+ace0, U+ad50, U+ad6c, U+ae30, U+ae34, U+ae38, U+b20c, U+b2e8, U+b300, U+b3d9, U+b4dc, U+b77c, U+b780, U+b7ec, U+b85c-b85d, U+b97c, U+b9ac, U+b9c1, U+ba74, U+bc18, U+bcf5, U+bd84, U+c0ac, U+c0c1, U+c0c9, U+c0dd, U+c120, U+c124, U+c218, U+c2dc, U+c2e4, U+c548, U+c5c5, U+c5d0, U+c694, U+c6b4, U+c740, U+c744, U+c774, U+c77c, U+c790-c791, U+c7ac, U+c804, U+c808, U+c815, U+c870, U+c874, U+c900, U+c911, U+c9c0, U+ccad, U+ccb4, U+ce58, U+d06c, U+d0b7, U+d30c, U+d328, U+d544, U+d558, U+d64d, U+d654, U+d68c;
+}
