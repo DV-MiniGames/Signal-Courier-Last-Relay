@@ -1,0 +1,4 @@
+interface:
+  display_name: "Game Production Baseline"
+  short_description: "기획부터 출시 회고까지 게임 제작 기준선을 실행합니다"
+  default_prompt: "Use $game-production-baseline to plan and run a reusable game production workflow for this project."

@@ -1,0 +1,16 @@
+assets: []
+
+# 각 항목에 다음 필드를 기록한다.
+# - id
+# - runtime_path
+# - source_url
+# - author
+# - license
+# - commercial_use
+# - modification
+# - redistribution
+# - attribution
+# - source_sha256
+# - stored_sha256
+# - transformation
+# - credits_path

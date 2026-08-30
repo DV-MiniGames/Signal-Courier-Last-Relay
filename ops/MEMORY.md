@@ -21,6 +21,7 @@
 | MEM-007 | M1 코어는 `GameState + InputFrame -> stepGame`의 60Hz 순수 시뮬레이션과 브라우저 어댑터를 분리하며, 동일 seed·입력 10회와 실제 Playwright 흐름으로 결정론과 화면을 함께 검증한다. | [M1 작업 기록](tasks/TASK-20260830-03.md) | 2026-08-30 |
 | MEM-008 | 현재 빌드는 105·90·75초의 세 손설계 구역을 연속 진행하고, 엄폐 충돌·상승하는 적 압력·처치 게이트·누적 점수와 결정론적 Canvas/Web Audio 피드백을 사용한다. | [3구역 작업 기록](tasks/TASK-20260830-04.md) | 2026-08-30 |
 | MEM-009 | 플레이 영상은 Canvas `captureStream`과 절차 합성 Web Audio destination을 MediaRecorder로 결합해 실제 DOM 입력 완주를 녹화하고, README에는 경량 GIF를 MP4 링크로 사용한다. | [미디어 작업 기록](tasks/TASK-20260830-05.md) | 2026-08-30 |
+| MEM-010 | 새 게임은 [게임 제작 기준선](../docs/process/GAME-PRODUCTION-BASELINE.md)과 `game-production-baseline` 스킬로 저장소 정렬, 역할별 사전 제작, 위험 우선 수직 조각, 장르별 도전·피드백, 사람 검증, 공개 미디어와 회고를 반복한다. | [기준선 작업 기록](tasks/TASK-20260830-08.md) | 2026-08-30 |
 
 ## Stale
 

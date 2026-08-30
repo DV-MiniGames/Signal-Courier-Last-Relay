@@ -91,3 +91,9 @@ Original prompt: https://github.com/ImGdevel/Hermes-Agent 이 에이전트를 �
 - 독립 문체 검토에서 명령형 구호, 추상적인 도시 서사와 균형을 맞춘 홍보형 나열을 AI식 표현으로 분류했다. README는 게임 방식·실행·조작·현재 범위를 직접 설명하도록 다시 썼다.
 - 브라우저 설명과 시작 화면은 `중계기 설치 · 패킷 회수 · 업로드`, 다음 구역의 제한 시간·적 증가 안내로 바꿨다. 공개 문구 검색에서 지적 문구는 사용자 원문을 보존한 이 작업 기록에만 남았다.
 - 현재 소스의 960×540 시작 화면을 공용 `develop-web-game` client로 열어 문구 겹침·잘림·콘솔 오류가 없음을 확인했다. `npm run verify`(14 tests, build, media hash, 실제 3구역 완주), `npm audit` 0건, `git diff --check`가 성공해 `TASK-20260830-07`을 Done으로 이동했다.
+- Original prompt (TASK-20260830-08): 지금까지 게임을 만들며 배운 내용을 정리하고, 기획·스토리·레벨·사운드·그래픽 등 역할과 전 과정을 다음 게임에도 적용할 수 있는 AI 제작 기준선으로 만든다.
+- `TASK-20260830-08`을 Doing으로 시작했다. 이번 게임의 수치·장르·기술 선택은 프로젝트 고유 사실로 남기고, 역할 계약·제작 게이트·증거 사다리·starter workspace만 공통 기준선으로 승격한다.
+- 기획·프로듀서, 크리에이티브·사운드·미디어, 레벨·게임플레이·QA 역할의 독립 검토를 통합해 저장소 정렬부터 회고까지 9단계와 `Pass/Repair/Reframe/Stop` 판정을 정의했다.
+- `.agents/skills/game-production-baseline`에 역할, 단계, 검증, 재작업 교훈, 11개 starter 파일과 덮어쓰기 방지 bootstrap script를 만들었다. 같은 18개 파일을 사용자 Codex 스킬 폴더에 설치하고 source와 설치본 SHA-256 일치를 확인했다.
+- Godot 카드 요리 퍼즐로 독립 전방 테스트해 공간·웹 액션 과적합을 발견했다. 단계의 primary/prerequisite 분리, 레벨·콘텐츠·퍼즐 역할, 장르별 완료 가능성, 해법·교착·행동 예산, 입력 증거 3단계를 보강한 뒤 재검증에서 `Pass` 판정을 받았다.
+- `quick_validate.py`, starter 11파일 복사와 재실행 덮어쓰기 차단, 로컬 문서 링크, `npm run verify`(14 tests, build, media hash, 실제 3구역 완주), `npm audit` 0건과 `git diff --check`가 성공해 `TASK-20260830-08`을 Done으로 이동했다.
