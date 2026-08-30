@@ -1,0 +1,46 @@
+name: 실행 작업
+description: 검증 가능한 단일 작업을 등록합니다.
+title: "[Task] "
+labels: ["task"]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: 문제와 기대 효과
+      description: 현재 문제와 이 작업이 만들 변화를 작성합니다.
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: 범위와 비범위
+      description: 포함하는 것과 의도적으로 제외하는 것을 작성합니다.
+    validations:
+      required: true
+  - type: textarea
+    id: output
+    attributes:
+      label: 결과물
+      description: 리뷰 가능한 구체적 산출물을 작성합니다.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: 완료 조건
+      description: 관찰 가능한 체크리스트로 작성합니다.
+      value: "- [ ] "
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: 검증 방법
+      description: 테스트, 명령, 측정값 또는 수동 재현 절차를 작성합니다.
+    validations:
+      required: true
+  - type: textarea
+    id: risks
+    attributes:
+      label: 의존성과 위험
+
