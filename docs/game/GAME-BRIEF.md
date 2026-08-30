@@ -1,4 +1,4 @@
-# Signal Courier 게임 브리프
+# SIGNAL COURIER: LAST RELAY 게임 브리프
 
 ## 제품 한 줄
 

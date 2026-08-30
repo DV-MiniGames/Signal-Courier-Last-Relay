@@ -587,11 +587,14 @@ export class CanvasRenderer {
     context.fillRect(0, 82, VIEW_WIDTH, VIEW_HEIGHT - 82);
     context.textAlign = "center";
     context.fillStyle = COLORS.cyan;
-    context.font = "600 50px Oxanium, system-ui, sans-serif";
-    context.fillText("SIGNAL COURIER", VIEW_WIDTH / 2, 164);
+    context.font = "600 44px Oxanium, system-ui, sans-serif";
+    context.fillText("SIGNAL COURIER", VIEW_WIDTH / 2, 151);
+    context.fillStyle = COLORS.orange;
+    context.font = "600 25px Oxanium, system-ui, sans-serif";
+    context.fillText("LAST RELAY", VIEW_WIDTH / 2, 188);
     context.fillStyle = COLORS.white;
-    context.font = "600 19px Noto Sans KR, system-ui, sans-serif";
-    context.fillText("서로 다른 3개 구역을 연결하고 최종 패킷을 전달하라", VIEW_WIDTH / 2, 203);
+    context.font = "600 16px Noto Sans KR, system-ui, sans-serif";
+    context.fillText("세 구역을 연결하고 도시의 마지막 신호를 복구하라", VIEW_WIDTH / 2, 220);
 
     const controls: Array<{ glyph: string; label: string }> = [
       { glyph: "wasd", label: "이동" },

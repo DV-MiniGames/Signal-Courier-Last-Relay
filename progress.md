@@ -80,3 +80,9 @@ Original prompt: https://github.com/ImGdevel/Hermes-Agent 이 에이전트를 �
 - 실제 게임에 `stage-started` 절차 합성음을 추가하고 단위 테스트로 전환 effect를 고정했다. 캡처 중 Playwright screenshot을 분리하고 WebM 오디오를 48kHz 연속 timeline으로 재표본화한 뒤 50ms 지연 보정과 A/V 동시 2배속을 적용했다.
 - 최종 본편은 1280×720 60fps 58.017초, video/audio 끝점 차이 17ms다. 1→2 전환 첫 frame에 2단계 시작 cue를 맞추고 전환 contact sheet·파형, 12초 GIF 4장면과 최종 poster를 직접 검토했다.
 - 최종 회귀 검증에서 `npm run verify`(14 tests, build, media hash, 실제 3구역 완주), `npm audit` 0건, `git diff --check`, 공개 develop-web-game client 2회 입력·상태·스크린샷을 모두 통과했다. 임시 client dependency junction은 검증 후 제거했다.
+- Original prompt (TASK-20260830-06): 게임과 저장소 이름을 `SIGNAL COURIER: LAST RELAY`로 변경하고, 기술 설명보다 저장소 방문자에게 필요한 내용만 전달하도록 README를 다시 작성한다.
+- `TASK-20260830-06`을 Doing으로 시작했다. 공개 이름·첫 화면·패키지·현재 제품 문서의 명칭 통일과 방문자 중심 README를 범위로 두고 게임 규칙과 검증 기록은 보존한다.
+- GitHub 저장소를 `ImGdevel/Signal-Courier-Last-Relay`로 변경하고 `origin`과 공개 설명을 새 이름·게임 중심 문구로 갱신했다. package 이름은 `signal-courier-last-relay`로 통일했다.
+- README를 123줄에서 63줄로 줄였다. 하네스·자동화 API·폴더 구조·미디어 hash 설명을 전면에서 제거하고 한 줄 판타지, 영상, 핵심 루프, 실행, 조작과 현재 빌드만 남겼다.
+- Canvas 시작 화면은 `SIGNAL COURIER`/`LAST RELAY` 2단 제목과 새 목표 문구로 바꿨다. 공개 게임 client의 960×540 스크린샷과 text state에서 겹침·잘림·오류가 없음을 확인했다.
+- `npm run verify`(14 tests, build, media hash, 실제 3구역 완주), `npm audit` 0건, `git diff --check`가 성공했다. 루트 코드 라이선스 결정은 별도 후속 작업으로 남긴다.

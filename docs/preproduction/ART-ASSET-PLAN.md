@@ -1,4 +1,4 @@
-# Signal Courier 아트·오디오·에셋 제작 계획
+# SIGNAL COURIER: LAST RELAY 아트·오디오·에셋 제작 계획
 
 - 문서 상태: Preproduction Lock v1.0
 - 연결 작업: `TASK-20260830-02`
@@ -377,4 +377,4 @@ Oxanium: Copyright 2019 The Oxanium Project Authors (SIL OFL 1.1)
 Noto Sans KR: Copyright 2014-2021 Adobe (SIL OFL 1.1)
 ```
 
-이 기준선의 핵심 판단은 외부 에셋을 많이 모으는 것이 아니라, 법적 추적이 쉬운 보조 자산만 가져오고 Signal Courier를 알아보게 만드는 형태·망·상태 언어는 직접 소유하는 것이다.
+이 기준선의 핵심 판단은 외부 에셋을 많이 모으는 것이 아니라, 법적 추적이 쉬운 보조 자산만 가져오고 SIGNAL COURIER: LAST RELAY를 알아보게 만드는 형태·망·상태 언어는 직접 소유하는 것이다.

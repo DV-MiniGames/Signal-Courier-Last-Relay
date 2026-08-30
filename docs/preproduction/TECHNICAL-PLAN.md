@@ -1,14 +1,14 @@
-# Signal Courier 기술 계획
+# SIGNAL COURIER: LAST RELAY 기술 계획
 
 - 문서 상태: Preproduction Lock v1.0
-- 연결 작업: `TASK-20260830-02` Signal Courier 사전 제작 기준선 확정
+- 연결 작업: `TASK-20260830-02` SIGNAL COURIER: LAST RELAY 사전 제작 기준선 확정
 - 역할: 테크니컬 디렉터
 - 조사일: 2026-08-30 (KST)
 - 결론: **MVP는 현재의 Vite + TypeScript + 브라우저 Canvas 2D를 유지한다. 게임 엔진과 런타임 라이브러리는 추가하지 않고, 순수 시뮬레이션 코어와 브라우저 어댑터를 분리한다.**
 
 ## 1. 결정 요약
 
-Signal Courier의 첫 제품 범위는 한 맵, 10분 하드 캡, 최대 중계기 3개, 일반 적 4종, 데스크톱 웹이다. 현재 기준선은 이미 단일 Canvas에서 입력, 상태 진행, 렌더링, Playwright 조작, 텍스트 상태, 결정론적 시간 훅을 한 번 검증했다. 이 범위에서는 엔진 도입으로 얻는 장면 편집·물리·애니메이션 기능보다 마이그레이션, 번들, 학습, 자동화 어댑터 비용이 더 크다.
+SIGNAL COURIER: LAST RELAY의 첫 제품 범위는 한 맵, 10분 하드 캡, 최대 중계기 3개, 일반 적 4종, 데스크톱 웹이다. 현재 기준선은 이미 단일 Canvas에서 입력, 상태 진행, 렌더링, Playwright 조작, 텍스트 상태, 결정론적 시간 훅을 한 번 검증했다. 이 범위에서는 엔진 도입으로 얻는 장면 편집·물리·애니메이션 기능보다 마이그레이션, 번들, 학습, 자동화 어댑터 비용이 더 크다.
 
 최종 선택은 다음과 같다.
 
@@ -74,7 +74,7 @@ Context7에서 확인 가능한 버전별 문서는 Phaser 3.90, PixiJS 8.16, Go
 | 제공 기능 | 없음; 필요한 것만 구현 | 카메라, loader, scene, animation, input, audio, Arcade/Matter physics | scene graph, sprite/text/graphics, asset loader, filters; 게임 규칙·물리·오디오 없음 | 시각 편집기, scene/node, animation, physics, audio, profiler, export |
 | 학습·전환 비용 | 현재 팀 기준 낮음 | 중간. Phaser API와 engine lifecycle 습득, 기존 renderer 재작성 | 중간. 렌더 계층만 교체 가능하나 scene graph와 asset API 습득 필요 | 높음. GDScript/scene/editor/export 파이프라인으로 사실상 재작성 |
 | 라이선스 | 브라우저 표준 API, 추가 런타임 라이선스 없음 | MIT | MIT | MIT, 배포물에 엔진 라이선스 고지 필요 |
-| Signal Courier 판단 | **MVP 채택** | 기능 요구가 커질 때 재평가 | **첫 렌더러 전환 후보** | 웹 우선 조건이 바뀔 때만 재평가 |
+| SIGNAL COURIER: LAST RELAY 판단 | **MVP 채택** | 기능 요구가 커질 때 재평가 | **첫 렌더러 전환 후보** | 웹 우선 조건이 바뀔 때만 재평가 |
 
 ### 가중 평가
 
