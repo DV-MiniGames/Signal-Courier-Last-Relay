@@ -83,6 +83,11 @@ Original prompt: https://github.com/ImGdevel/Hermes-Agent 이 에이전트를 �
 - Original prompt (TASK-20260830-06): 게임과 저장소 이름을 `SIGNAL COURIER: LAST RELAY`로 변경하고, 기술 설명보다 저장소 방문자에게 필요한 내용만 전달하도록 README를 다시 작성한다.
 - `TASK-20260830-06`을 Doing으로 시작했다. 공개 이름·첫 화면·패키지·현재 제품 문서의 명칭 통일과 방문자 중심 README를 범위로 두고 게임 규칙과 검증 기록은 보존한다.
 - GitHub 저장소를 `ImGdevel/Signal-Courier-Last-Relay`로 변경하고 `origin`과 공개 설명을 새 이름·게임 중심 문구로 갱신했다. package 이름은 `signal-courier-last-relay`로 통일했다.
-- README를 123줄에서 63줄로 줄였다. 하네스·자동화 API·폴더 구조·미디어 hash 설명을 전면에서 제거하고 한 줄 판타지, 영상, 핵심 루프, 실행, 조작과 현재 빌드만 남겼다.
+- README를 123줄에서 63줄로 줄였다. 하네스·자동화 API·폴더 구조·미디어 hash 설명을 전면에서 제거하고 짧은 소개, 영상, 핵심 루프, 실행, 조작과 현재 빌드만 남겼다.
 - Canvas 시작 화면은 `SIGNAL COURIER`/`LAST RELAY` 2단 제목과 새 목표 문구로 바꿨다. 공개 게임 client의 960×540 스크린샷과 text state에서 겹침·잘림·오류가 없음을 확인했다.
 - `npm run verify`(14 tests, build, media hash, 실제 3구역 완주), `npm audit` 0건, `git diff --check`가 성공했다. 루트 코드 라이선스 결정은 별도 후속 작업으로 남긴다.
+- Original prompt (TASK-20260830-07): README의 “마지막 신호를 연결하라” 같은 AI 말투와 비슷한 공개 문구를 모두 제거하고 문체를 검사한다.
+- `TASK-20260830-07`을 Doing으로 시작했다. README, 브라우저 설명과 Canvas 시작 화면의 슬로건·명령형·추상 서사 표현을 기능 설명으로 바꾸고 링크와 조작 정보는 유지한다.
+- 독립 문체 검토에서 명령형 구호, 추상적인 도시 서사와 균형을 맞춘 홍보형 나열을 AI식 표현으로 분류했다. README는 게임 방식·실행·조작·현재 범위를 직접 설명하도록 다시 썼다.
+- 브라우저 설명과 시작 화면은 `중계기 설치 · 패킷 회수 · 업로드`, 다음 구역의 제한 시간·적 증가 안내로 바꿨다. 공개 문구 검색에서 지적 문구는 사용자 원문을 보존한 이 작업 기록에만 남았다.
+- 현재 소스의 960×540 시작 화면을 공용 `develop-web-game` client로 열어 문구 겹침·잘림·콘솔 오류가 없음을 확인했다. `npm run verify`(14 tests, build, media hash, 실제 3구역 완주), `npm audit` 0건, `git diff --check`가 성공해 `TASK-20260830-07`을 Done으로 이동했다.

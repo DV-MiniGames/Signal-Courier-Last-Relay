@@ -594,7 +594,7 @@ export class CanvasRenderer {
     context.fillText("LAST RELAY", VIEW_WIDTH / 2, 188);
     context.fillStyle = COLORS.white;
     context.font = "600 16px Noto Sans KR, system-ui, sans-serif";
-    context.fillText("세 구역을 연결하고 도시의 마지막 신호를 복구하라", VIEW_WIDTH / 2, 220);
+    context.fillText("중계기 설치 · 패킷 회수 · 업로드", VIEW_WIDTH / 2, 220);
 
     const controls: Array<{ glyph: string; label: string }> = [
       { glyph: "wasd", label: "이동" },
@@ -618,10 +618,10 @@ export class CanvasRenderer {
     });
     context.fillStyle = COLORS.orange;
     context.font = "600 22px Oxanium, system-ui, sans-serif";
-    context.fillText("ENTER TO START SIGNAL RUN", VIEW_WIDTH / 2, 431);
+    context.fillText("PRESS ENTER TO START", VIEW_WIDTH / 2, 431);
     context.fillStyle = COLORS.city500;
     context.font = "500 14px Noto Sans KR, system-ui, sans-serif";
-    context.fillText("구역마다 제한 시간·위협 수·공격 빈도가 상승한다", VIEW_WIDTH / 2, 471);
+    context.fillText("다음 구역에서는 제한 시간이 줄고 적이 늘어납니다", VIEW_WIDTH / 2, 471);
   }
 
   private drawStageClear(state: Readonly<GameState>): void {
