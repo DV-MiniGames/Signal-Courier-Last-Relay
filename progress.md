@@ -45,3 +45,38 @@ Original prompt: https://github.com/ImGdevel/Hermes-Agent 이 에이전트를 �
 - 독립 코드 검토에서 사망과 마지막 업로드 tick이 겹치면 패배가 승리로 덮일 수 있는 순서를 발견해 terminal mode에서 즉시 step을 종료하고 회귀 테스트를 추가했다. reduced-motion 설정에서는 교란 링크 dash offset과 중계기 맥동도 정지하도록 보완했다.
 - 운영 상태는 기술 구현 완료를 반영해 `TASK-20260830-03`을 Review로 이동했다. 실제 신규 플레이어 5명 중 4명 무설명 성공 기준은 자동화로 대체하지 않고 미완료로 유지한다.
 - 독립 리뷰의 나머지 지적도 반영했다. Vite 8 공식 문서를 Context7로 확인해 `base: "./"`와 build asset emission을 적용하고, `test:build`가 생산 HTML 상대 URL 및 `dist/licenses/` 고지 5개의 원본 byte 일치를 검증한다. 실제 과열 assertion, 폰트 byte 크기 manifest, README 에셋 경계도 보강했으며 최종 `npm run verify`가 통과했다.
+- Original prompt (TASK-20260830-04): 현재 단일 공간뿐인 게임에 점점 어려워지는 레벨 디자인을 추가하고, 부족한 타격 이펙트·소리·사운드·FX·UX를 개선한다.
+- `TASK-20260830-04`를 Doing으로 시작했다. 범위는 3개 손설계 구역, 단조로운 난이도 상승, 엄폐 충돌, 구역 점수·전환, 결정론적 Canvas FX와 절차 합성 음향이다.
+- `외곽 회선(105초·적 2·처치 0)`, `교차 구역(90초·적 4·처치 2)`, `붕괴 코어(75초·적 6·처치 4)`를 손설계했다. 본부·소켓·패킷·건물과 적 배치, 속도·사격·피해 배율이 구역별로 달라진다.
+- 건물은 장식이 아니라 플레이어·추격자·양측 투사체를 막는 엄폐물이 됐다. 시드 위치 검증에서 1구역 사수가 건물에 겹치는 결함을 발견해 스폰을 이동하고 모든 목표·적의 충돌 안전 테스트를 추가했다.
+- 업로드 때 남은 시간·처치·구역 보너스를 점수화하고 1·2구역은 `stage-cleared`, `Enter`로 다음 구역, 3구역만 `won`이 되도록 구현했다. 체력은 구역 전환 때 24만 회복하고 점수·누적 처치·전체 tick은 승계한다.
+- 사격 muzzle, 명중 spark, 처치 burst, 피격 vignette·shake, 대시·EMP ring, 중계기·업로드 burst와 조준점을 Canvas로 직접 제작했다. reduced-motion에서는 흔들림과 비필수 반복 애니메이션이 정지한다.
+- Web Audio에 compressor와 결정론적 noise buffer를 두고 사격·명중·처치·피격·대시·EMP·패킷·중계기 상태·구역 완료를 서로 다른 tone/noise 조합으로 연결했다. 외부 음악·음원은 추가하지 않았다.
+- 실제 입력 Playwright 길찾기가 2구역 시작 출구의 과도한 병목과 3구역 마지막 사수 구역의 사실상 폐쇄 통로를 발견했다. 건물 위치·폭을 조정해 엄폐 선택은 유지하면서 최소 통과 폭을 확보했다.
+- 최종 `npm run verify`는 Vitest 5개 파일 14개 테스트, build/license 검사와 3구역 실제 입력 완주를 통과했다. 구역별 점수·처치·hash는 `2110/2/980bceb3`, `4620/6/ddf74eff`, `7640/12/fbc2e4dc`였고 console/page error는 0개였다.
+- 공용 `develop-web-game` 클라이언트도 3회 성공했다. 출력 상태에는 구역·점수·처치 게이트·엄폐 좌표·FX가 포함되며 최신 화면을 직접 열어 HUD/상태 일치와 잘림 없음을 확인했다. 실행용 임시 Playwright junction은 검증 후 정확한 대상 확인을 거쳐 제거했다.
+- `npm audit --audit-level=high`는 취약점 0건, `git diff --check`는 오류 0건이다. `TASK-20260830-04`를 Done으로 이동했다.
+- TODO: 실제 신규 플레이어에게 세 구역을 맡겨 구역별 완료 시간·사망 지점·재도전 의향을 수집하고, 반복감이 확인되면 새 적을 먼저 늘리기보다 목표 순서나 중계기 선택을 변주한다.
+- Original prompt (TASK-20260830-05): 현재 이펙트와 레벨 디자인을 보여 주는 플레이 영상을 만들고 README.md에 포함한다.
+- `TASK-20260830-05`를 Doing으로 시작했다. 실제 Canvas와 Web Audio를 함께 녹화한 3구역 완주 MP4, README용 GIF·포스터, 재현 가능한 export manifest를 범위로 둔다.
+- `ProceduralAudio`의 master compressor 출력을 스피커와 `MediaStreamAudioDestinationNode`로 분기하고 Canvas `captureStream(60)`과 합치는 읽기 전용 녹화 계약을 추가했다. 게임 상태와 canonical hash 규칙은 변경하지 않는다.
+- `scripts/verify-game.mjs`에 `GAMEPLAY_CAPTURE_FILE` 모드를 추가했다. 실제 키·pointer 길찾기 완주를 100ms 이하 step으로 나눠 약 5배속으로 녹화하고 메뉴·처치 FX·중계기·구역 완료·최종 화면에서 정지한다. 일반 회귀 모드는 기존 속도와 hash를 유지한다.
+- 원본 WebM은 VP9 960×540 약 40초·Opus 48kHz stereo이며 실제 게임 음향이 포함됐다. FFmpeg로 H.264 High/AAC-LC 1280×720 40.332초 MP4(1,584,407 bytes), 640×360 12.66초 GIF(836,988 bytes), 1280×720 poster(48,383 bytes)를 만들었다.
+- 원본 3·14·26·36·39·40초 프레임과 GIF의 네 장면을 직접 검토했다. 1·2·3구역, 처치 burst, 중계기 상호작용과 `NETWORK RESTORED` 결과가 잘리지 않고 표시된다. MP4 음향은 mean -24.4dB, max -1.0dB로 무음이나 clipping이 아니다.
+- README를 게임 중심 쇼케이스로 다시 작성했다. 0.84MB GIF를 누르면 사운드 포함 MP4가 열리고, 게임 흐름·세 구역·전투 피드백·실행·조작·검증·기술 구조를 한 문서에서 설명한다.
+- `docs/media/MANIFEST.yml`에 export 규격·크기·SHA-256·FFmpeg 명령·출처를 기록하고 `npm run test:media`가 세 파일 byte/hash와 README 링크를 검사하도록 했다.
+- 최종 `npm run verify`, 공개 `develop-web-game` client 3회, `npm audit --audit-level=high`, `git diff --check`가 성공했다. Vitest 14개·3구역 실제 완주·미디어 hash·콘솔/page error 0건을 확인하고 `TASK-20260830-05`를 Done으로 이동했다.
+- TODO: 릴리스마다 영상을 누적하지 말고 README 대표 영상만 교체한다. 과거 버전 보존이 필요하면 GitHub Release나 itch.io 페이지로 이동한다.
+- 사용자 검토에서 영상이 중간중간 끊기고 3구역의 사운드 싱크가 맞지 않는 문제가 확인돼 `TASK-20260830-05`를 다시 Doing으로 열었다.
+- MP4 stream 마지막 시각은 video 40.267초, audio 40.323초로 컨테이너 drift는 57ms뿐이었다. 실제 원인은 녹화 loop가 100ms 시뮬레이션(최대 6 tick)을 한 화면에 반영하면서 그 사이 여러 효과음을 현재 wall-clock에 한꺼번에 재생한 것이었다. 사건 밀도가 높은 3구역에서 화면은 중간 FX를 건너뛰고 음향은 몰려 싱크 불일치가 커졌다.
+- 수정 방향: 녹화 중 한 Canvas 갱신마다 정확히 1 tick만 진행하고, Playwright evaluate 비용을 뺀 나머지 시간을 기다려 wall-clock 60Hz를 맞춘다. 기존 5배속 표기와 export manifest도 실시간 동기 방식으로 정정한다.
+- 1차 60Hz 재녹화는 A/V 마지막 packet 차이를 10ms로 줄였지만 124.5초에 7,035 video packet이 생겼다. 100ms를 `1000/60`으로 나눈 부동소수점 잔여가 입력 버스트마다 상태 변화 없는 추가 frame을 만들고, screenshot 함수의 0.4~1.4초 정지도 전투 중 끊김처럼 보일 수 있음을 확인했다.
+- 녹화 loop의 잔여 종료 임계값을 0.01ms로 고정하고, 메뉴·구역 완료·최종 결과 외 screenshot 정지를 제거했다. 다음 재녹화는 불필요한 무변경 frame 수와 전체 길이가 줄어야 한다.
+- 최종 v3 원본은 video 마지막 packet 116.847초/6,830개, audio 마지막 packet 116.815초로 v2의 124.524초/7,035 video packet보다 무변경 frame과 정지 시간이 감소했다.
+- 최종 MP4는 H.264 High 1280×720 60fps 7,011 frame, video 116.850초와 AAC-LC 48kHz stereo audio 116.853초로 A/V stream 길이 차이가 2.8ms다. 1·2·3구역의 타격 장면 0.25초 음향은 각각 최대 -4.8/-6.0/-3.0dB로 같은 시점에 존재한다.
+- 3구역 72초 부근 연속 10 frame contact sheet에서 플레이어·명중 FX·적·조준선이 작은 간격으로 연속 이동함을 확인했다. 최종 구역별 프레임, 13초 GIF의 4개 장면과 poster도 직접 검토했다.
+- README MP4, GIF, poster를 v3로 교체하고 `docs/media/MANIFEST.yml`의 60fps·116.874초·크기·SHA-256·export 명령을 갱신했다. 사용자 피드백에 따른 재작업을 주간 Rework rate 25%(1/4)로 기록했다.
+- 두 번째 사용자 영상 검토에서 116.874초 본편이 지나치게 느리고 1→2 완료 뒤 무음이 전환 싱크 불일치처럼 느껴짐을 확인했다. 독립 검토로 1구역 완료 화면 29.633초/완료음 29.697초(약 64ms 지연)와 다음 구역 첫 화면 30.517초를 측정했다.
+- 실제 게임에 `stage-started` 절차 합성음을 추가하고 단위 테스트로 전환 effect를 고정했다. 캡처 중 Playwright screenshot을 분리하고 WebM 오디오를 48kHz 연속 timeline으로 재표본화한 뒤 50ms 지연 보정과 A/V 동시 2배속을 적용했다.
+- 최종 본편은 1280×720 60fps 58.017초, video/audio 끝점 차이 17ms다. 1→2 전환 첫 frame에 2단계 시작 cue를 맞추고 전환 contact sheet·파형, 12초 GIF 4장면과 최종 poster를 직접 검토했다.
+- 최종 회귀 검증에서 `npm run verify`(14 tests, build, media hash, 실제 3구역 완주), `npm audit` 0건, `git diff --check`, 공개 develop-web-game client 2회 입력·상태·스크린샷을 모두 통과했다. 임시 client dependency junction은 검증 후 제거했다.

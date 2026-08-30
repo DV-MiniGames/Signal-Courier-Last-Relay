@@ -8,9 +8,10 @@
     "check": "tsc --noEmit",
     "build": "npm run check && vite build",
     "test:build": "node scripts/verify-build.mjs",
+    "test:media": "node scripts/verify-media.mjs",
     "test:unit": "vitest run",
     "test:game": "node scripts/verify-game.mjs",
-    "verify": "npm run check && npm run test:unit && npm run build && npm run test:build && npm run test:game",
+    "verify": "npm run check && npm run test:unit && npm run build && npm run test:build && npm run test:media && npm run test:game",
     "preview": "vite preview"
   },
   "devDependencies": {

@@ -19,6 +19,8 @@
 | MEM-005 | 핵심 시각 자산은 직접 제작하며 외부 자산은 CC0/OFL 보조 파일만 출처·라이선스·해시·변환을 기록한 뒤 편입한다. | [아트·에셋 계획](../docs/preproduction/ART-ASSET-PLAN.md) | 2026-08-30 |
 | MEM-006 | 비코드 작업은 Codex가 수행하고 코드 구현은 Claude 접근 가능 시 우선하며, 불가하면 Codex로 전환한다. Gemini는 사용하지 않는다. | [프로젝트 헌장](CHARTER.md) | 2026-08-30 |
 | MEM-007 | M1 코어는 `GameState + InputFrame -> stepGame`의 60Hz 순수 시뮬레이션과 브라우저 어댑터를 분리하며, 동일 seed·입력 10회와 실제 Playwright 흐름으로 결정론과 화면을 함께 검증한다. | [M1 작업 기록](tasks/TASK-20260830-03.md) | 2026-08-30 |
+| MEM-008 | 현재 빌드는 105·90·75초의 세 손설계 구역을 연속 진행하고, 엄폐 충돌·상승하는 적 압력·처치 게이트·누적 점수와 결정론적 Canvas/Web Audio 피드백을 사용한다. | [3구역 작업 기록](tasks/TASK-20260830-04.md) | 2026-08-30 |
+| MEM-009 | 플레이 영상은 Canvas `captureStream`과 절차 합성 Web Audio destination을 MediaRecorder로 결합해 실제 DOM 입력 완주를 녹화하고, README에는 경량 GIF를 MP4 링크로 사용한다. | [미디어 작업 기록](tasks/TASK-20260830-05.md) | 2026-08-30 |
 
 ## Stale
 

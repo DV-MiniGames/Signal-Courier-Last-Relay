@@ -1,6 +1,7 @@
 node_modules/
 dist/
 artifacts/
+output/
+.recordings/
 *.log
 .DS_Store
-
