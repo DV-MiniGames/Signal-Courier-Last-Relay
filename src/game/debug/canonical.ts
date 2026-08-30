@@ -8,12 +8,18 @@ export function canonicalState(state: GameState): string {
     rngState: state.rngState,
     tick: state.tick,
     elapsedTicks: state.elapsedTicks,
+    levelIndex: state.levelIndex,
+    score: state.score,
+    stageKills: state.stageKills,
+    totalKills: state.totalKills,
+    lastStageScore: state.lastStageScore,
     nextEntityId: state.nextEntityId,
     player: state.player,
     relay: state.relay,
     packet: state.packet,
     enemies: state.enemies,
     projectiles: state.projectiles,
+    visualEffects: state.visualEffects,
     uploadedPackets: state.uploadedPackets,
   });
 }

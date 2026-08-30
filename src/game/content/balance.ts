@@ -1,10 +1,6 @@
-import { TICKS_PER_SECOND } from "../core/clock";
-
 export const VIEW_WIDTH = 960;
 export const VIEW_HEIGHT = 540;
 export const ARENA = { left: 42, top: 92, right: 918, bottom: 506 } as const;
-export const MISSION_SECONDS = 120;
-export const MISSION_TICKS = MISSION_SECONDS * TICKS_PER_SECOND;
 
 export const PLAYER = {
   radius: 15,

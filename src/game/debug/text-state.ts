@@ -1,4 +1,6 @@
-import { MISSION_TICKS, PLAYER, RELAY } from "../content/balance";
+import { PLAYER, RELAY } from "../content/balance";
+import { getLevelDefinition, LEVEL_COUNT } from "../content/level";
+import { TICKS_PER_SECOND } from "../core/clock";
 import { canonicalHash } from "./canonical";
 import type { GameState } from "../core/types";
 
@@ -7,7 +9,8 @@ function rounded(value: number): number {
 }
 
 export function renderTextState(state: Readonly<GameState>): string {
-  const remainingTicks = Math.max(0, MISSION_TICKS - state.elapsedTicks);
+  const level = getLevelDefinition(state.levelIndex);
+  const remainingTicks = Math.max(0, level.missionSeconds * TICKS_PER_SECOND - state.elapsedTicks);
   return JSON.stringify({
     schemaVersion: state.schemaVersion,
     coordinateSystem: "origin=(0,0) top-left; +x right; +y down; logicalCanvas=960x540",
@@ -15,6 +18,18 @@ export function renderTextState(state: Readonly<GameState>): string {
     seed: state.seed,
     tick: state.tick,
     canonicalHash: canonicalHash(state as GameState),
+    run: {
+      level: state.levelIndex + 1,
+      levelCount: LEVEL_COUNT,
+      levelId: level.id,
+      levelName: level.name,
+      difficulty: level.difficulty,
+      score: state.score,
+      stageKills: state.stageKills,
+      requiredKills: level.requiredKills,
+      totalKills: state.totalKills,
+      lastStageScore: state.lastStageScore,
+    },
     player: {
       x: rounded(state.player.x),
       y: rounded(state.player.y),
@@ -42,6 +57,7 @@ export function renderTextState(state: Readonly<GameState>): string {
       uploadedPackets: state.uploadedPackets,
       targetPackets: 1,
       extractionAvailable: state.uploadedPackets >= 1,
+      killGateOpen: state.stageKills >= level.requiredKills,
     },
     packet: {
       id: state.packet.id,
@@ -63,6 +79,12 @@ export function renderTextState(state: Readonly<GameState>): string {
       uploadProgress: rounded(state.relay.uploadProgressTicks / RELAY.uploadTicks),
       safeRadius: RELAY.safeRadius,
     },
+    obstacles: level.cityBlocks.map((block) => ({
+      x: block.x,
+      y: block.y,
+      width: block.width,
+      height: block.height,
+    })),
     enemies: state.enemies.map((enemy) => ({
       id: enemy.id,
       role: enemy.role,
@@ -76,6 +98,12 @@ export function renderTextState(state: Readonly<GameState>): string {
       player: state.projectiles.filter((projectile) => projectile.owner === "player").length,
       enemy: state.projectiles.filter((projectile) => projectile.owner === "enemy").length,
     },
+    visualEffects: state.visualEffects.map((effect) => ({
+      kind: effect.kind,
+      x: rounded(effect.x),
+      y: rounded(effect.y),
+      progress: rounded(effect.ageTicks / effect.durationTicks),
+    })),
     controls: "WASD/arrows move; mouse aim; left fire; Space dash; right EMP; hold E install/upload/repair; P pause; R restart; F fullscreen; Escape exit fullscreen",
   });
 }

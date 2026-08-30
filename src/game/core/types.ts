@@ -10,10 +10,26 @@ export interface Rect {
   height: number;
 }
 
-export type GameMode = "menu" | "playing" | "paused" | "won" | "lost";
+export type GameMode = "menu" | "playing" | "paused" | "stage-cleared" | "won" | "lost";
 export type EnemyRole = "chaser" | "shooter";
 export type LinkState = "normal" | "jammed" | "disconnected";
 export type PacketStatus = "ground" | "carried" | "uploaded";
+export type VisualEffectKind =
+  | "muzzle"
+  | "impact"
+  | "enemy-destroyed"
+  | "player-hit"
+  | "dash"
+  | "emp"
+  | "relay-burst"
+  | "upload-burst";
+
+export interface VisualEffectState extends Vec2 {
+  id: number;
+  kind: VisualEffectKind;
+  ageTicks: number;
+  durationTicks: number;
+}
 
 export interface PlayerState extends Vec2 {
   vx: number;
@@ -83,12 +99,16 @@ export type GameEffectType =
   | "dash"
   | "shot"
   | "emp"
-  | "hit"
+  | "enemy-hit"
+  | "enemy-destroyed"
+  | "player-hit"
   | "packet-picked"
   | "relay-installed"
   | "relay-jammed"
   | "relay-offline"
   | "relay-repaired"
+  | "stage-cleared"
+  | "stage-started"
   | "upload-complete";
 
 export interface GameEffect extends Vec2 {
@@ -102,11 +122,17 @@ export interface GameState {
   rngState: number;
   tick: number;
   elapsedTicks: number;
+  levelIndex: number;
+  score: number;
+  stageKills: number;
+  totalKills: number;
+  lastStageScore: number;
   nextEntityId: number;
   player: PlayerState;
   relay: RelayState;
   packet: PacketState;
   enemies: EnemyState[];
   projectiles: ProjectileState[];
+  visualEffects: VisualEffectState[];
   uploadedPackets: number;
 }

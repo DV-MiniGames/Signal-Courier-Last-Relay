@@ -1,10 +1,10 @@
-import { ARENA, ENEMY, MISSION_TICKS, PLAYER, RELAY } from "../content/balance";
-import { HEADQUARTERS } from "../content/level";
+import { ARENA, ENEMY, PLAYER, RELAY } from "../content/balance";
+import { getLevelDefinition, LEVEL_COUNT } from "../content/level";
 import { TICKS_PER_SECOND } from "../core/clock";
-import { circlesOverlap, clamp, distanceSquared, normalize } from "../core/math";
-import type { EnemyState, GameEffect, GameState, ProjectileState, Vec2 } from "../core/types";
+import { circleIntersectsRect, circlesOverlap, clamp, distanceSquared, normalize } from "../core/math";
+import type { EnemyState, GameEffect, GameState, ProjectileState, Rect, Vec2, VisualEffectKind } from "../core/types";
 import type { InputFrame } from "../model/commands";
-import { createGameState } from "../model/state";
+import { createGameState, createNextLevelState } from "../model/state";
 
 export interface TickResult {
   state: GameState;
@@ -13,6 +13,51 @@ export interface TickResult {
 
 function decrement(value: number): number {
   return Math.max(0, value - 1);
+}
+
+function moveCircle(position: Vec2, velocity: Vec2, radius: number, blocks: readonly Rect[]): Vec2 {
+  const next = { ...position };
+  const nextX = clamp(position.x + velocity.x / TICKS_PER_SECOND, ARENA.left + radius, ARENA.right - radius);
+  if (!blocks.some((block) => circleIntersectsRect({ x: nextX, y: next.y }, radius, block))) next.x = nextX;
+  const nextY = clamp(position.y + velocity.y / TICKS_PER_SECOND, ARENA.top + radius, ARENA.bottom - radius);
+  if (!blocks.some((block) => circleIntersectsRect({ x: next.x, y: nextY }, radius, block))) next.y = nextY;
+  return next;
+}
+
+const VISUAL_EFFECTS: Partial<Record<GameEffect["type"], readonly [VisualEffectKind, number]>> = {
+  dash: ["dash", 18],
+  shot: ["muzzle", 8],
+  emp: ["emp", 28],
+  "enemy-hit": ["impact", 14],
+  "enemy-destroyed": ["enemy-destroyed", 30],
+  "player-hit": ["player-hit", 24],
+  "relay-installed": ["relay-burst", 32],
+  "relay-jammed": ["relay-burst", 22],
+  "relay-offline": ["relay-burst", 34],
+  "relay-repaired": ["relay-burst", 32],
+  "stage-cleared": ["upload-burst", 50],
+  "upload-complete": ["upload-burst", 60],
+};
+
+function updateVisualEffects(state: GameState): void {
+  for (const effect of state.visualEffects) effect.ageTicks += 1;
+  state.visualEffects = state.visualEffects.filter((effect) => effect.ageTicks < effect.durationTicks);
+}
+
+function finishTick(state: GameState, effects: GameEffect[]): TickResult {
+  for (const effect of effects) {
+    const visual = VISUAL_EFFECTS[effect.type];
+    if (!visual) continue;
+    state.visualEffects.push({
+      id: state.nextEntityId++,
+      kind: visual[0],
+      x: effect.x,
+      y: effect.y,
+      ageTicks: 0,
+      durationTicks: visual[1],
+    });
+  }
+  return { state, effects };
 }
 
 function createProjectile(
@@ -44,12 +89,13 @@ function damagePlayer(state: GameState, damage: number, effects: GameEffect[]): 
   player.health = Math.max(0, player.health - damage);
   player.damageCooldownTicks = 28;
   player.invulnerableTicks = 12;
-  effects.push({ type: "hit", x: player.x, y: player.y });
+  effects.push({ type: "player-hit", x: player.x, y: player.y });
   if (player.health <= 0) state.mode = "lost";
 }
 
 function updatePlayer(state: GameState, input: InputFrame, effects: GameEffect[]): void {
   const player = state.player;
+  const level = getLevelDefinition(state.levelIndex);
   player.shotCooldownTicks = decrement(player.shotCooldownTicks);
   player.dashCooldownTicks = decrement(player.dashCooldownTicks);
   player.dashTicks = decrement(player.dashTicks);
@@ -79,8 +125,9 @@ function updatePlayer(state: GameState, input: InputFrame, effects: GameEffect[]
     player.vy = movement.y * PLAYER.speed;
   }
 
-  player.x = clamp(player.x + player.vx / TICKS_PER_SECOND, ARENA.left + player.radius, ARENA.right - player.radius);
-  player.y = clamp(player.y + player.vy / TICKS_PER_SECOND, ARENA.top + player.radius, ARENA.bottom - player.radius);
+  const movedPlayer = moveCircle(player, { x: player.vx, y: player.vy }, player.radius, level.cityBlocks);
+  player.x = movedPlayer.x;
+  player.y = movedPlayer.y;
 
   const relayBoost = state.relay.installed
     && state.relay.linkState === "normal"
@@ -129,27 +176,30 @@ function updatePlayer(state: GameState, input: InputFrame, effects: GameEffect[]
 }
 
 function beginShooterTelegraph(state: GameState, enemy: EnemyState): void {
+  const level = getLevelDefinition(state.levelIndex);
   const targetRelay = state.relay.installed && enemy.attacksFired % 2 === 1;
   const target = targetRelay ? state.relay : state.player;
   enemy.targetX = target.x;
   enemy.targetY = target.y;
   enemy.targetKind = targetRelay ? "relay" : "player";
-  enemy.telegraphTicks = ENEMY.shooterTelegraphTicks;
+  enemy.telegraphTicks = Math.max(18, Math.round(ENEMY.shooterTelegraphTicks / level.enemyFireRateMultiplier));
 }
 
 function updateEnemies(state: GameState, effects: GameEffect[]): void {
+  const level = getLevelDefinition(state.levelIndex);
   for (const enemy of state.enemies) {
     enemy.contactCooldownTicks = decrement(enemy.contactCooldownTicks);
     enemy.shotCooldownTicks = decrement(enemy.shotCooldownTicks);
 
     if (enemy.role === "chaser") {
       const direction = normalize({ x: state.player.x - enemy.x, y: state.player.y - enemy.y });
-      enemy.vx = direction.x * ENEMY.chaserSpeed;
-      enemy.vy = direction.y * ENEMY.chaserSpeed;
-      enemy.x = clamp(enemy.x + enemy.vx / TICKS_PER_SECOND, ARENA.left + enemy.radius, ARENA.right - enemy.radius);
-      enemy.y = clamp(enemy.y + enemy.vy / TICKS_PER_SECOND, ARENA.top + enemy.radius, ARENA.bottom - enemy.radius);
+      enemy.vx = direction.x * ENEMY.chaserSpeed * level.enemySpeedMultiplier;
+      enemy.vy = direction.y * ENEMY.chaserSpeed * level.enemySpeedMultiplier;
+      const movedEnemy = moveCircle(enemy, { x: enemy.vx, y: enemy.vy }, enemy.radius, level.cityBlocks);
+      enemy.x = movedEnemy.x;
+      enemy.y = movedEnemy.y;
       if (circlesOverlap(enemy, enemy.radius, state.player, state.player.radius) && enemy.contactCooldownTicks === 0) {
-        damagePlayer(state, ENEMY.contactDamage, effects);
+        damagePlayer(state, Math.round(ENEMY.contactDamage * level.enemyDamageMultiplier), effects);
         enemy.contactCooldownTicks = 48;
       }
       continue;
@@ -164,11 +214,11 @@ function updateEnemies(state: GameState, effects: GameEffect[]): void {
           "enemy",
           enemy,
           direction,
-          ENEMY.projectileSpeed,
-          ENEMY.projectileDamage,
+          ENEMY.projectileSpeed * (1 + state.levelIndex * 0.08),
+          Math.round(ENEMY.projectileDamage * level.enemyDamageMultiplier),
         ));
         enemy.attacksFired += 1;
-        enemy.shotCooldownTicks = ENEMY.shooterFireIntervalTicks;
+        enemy.shotCooldownTicks = Math.round(ENEMY.shooterFireIntervalTicks / level.enemyFireRateMultiplier);
       }
     } else if (enemy.shotCooldownTicks === 0) {
       beginShooterTelegraph(state, enemy);
@@ -177,6 +227,7 @@ function updateEnemies(state: GameState, effects: GameEffect[]): void {
 }
 
 function updateProjectiles(state: GameState, effects: GameEffect[]): void {
+  const level = getLevelDefinition(state.levelIndex);
   const survivors: ProjectileState[] = [];
   for (const projectile of state.projectiles) {
     projectile.x += projectile.vx / TICKS_PER_SECOND;
@@ -188,6 +239,7 @@ function updateProjectiles(state: GameState, effects: GameEffect[]): void {
       || projectile.x > ARENA.right
       || projectile.y < ARENA.top
       || projectile.y > ARENA.bottom
+      || level.cityBlocks.some((block) => circleIntersectsRect(projectile, projectile.radius, block))
     ) continue;
 
     let consumed = false;
@@ -195,7 +247,7 @@ function updateProjectiles(state: GameState, effects: GameEffect[]): void {
       for (const enemy of state.enemies) {
         if (!circlesOverlap(projectile, projectile.radius, enemy, enemy.radius)) continue;
         enemy.health -= projectile.damage;
-        effects.push({ type: "hit", x: enemy.x, y: enemy.y });
+        effects.push({ type: "enemy-hit", x: enemy.x, y: enemy.y });
         consumed = true;
         break;
       }
@@ -206,7 +258,7 @@ function updateProjectiles(state: GameState, effects: GameEffect[]): void {
       state.relay.installed
       && circlesOverlap(projectile, projectile.radius, state.relay, 24)
     ) {
-      state.relay.health = Math.max(0, state.relay.health - 25);
+      state.relay.health = Math.max(0, state.relay.health - level.relayDamage);
       state.relay.jammedTicks = RELAY.jamTicks;
       state.relay.linkState = state.relay.health > 0 ? "jammed" : "disconnected";
       effects.push({ type: state.relay.health > 0 ? "relay-jammed" : "relay-offline", x: state.relay.x, y: state.relay.y });
@@ -215,13 +267,21 @@ function updateProjectiles(state: GameState, effects: GameEffect[]): void {
     if (!consumed) survivors.push(projectile);
   }
   state.projectiles = survivors;
+  const defeated = state.enemies.filter((enemy) => enemy.health <= 0);
+  for (const enemy of defeated) {
+    state.stageKills += 1;
+    state.totalKills += 1;
+    state.score += 100 + state.levelIndex * 25;
+    effects.push({ type: "enemy-destroyed", x: enemy.x, y: enemy.y });
+  }
   state.enemies = state.enemies.filter((enemy) => enemy.health > 0).sort((a, b) => a.id - b.id);
 }
 
 function updateRelayAndMission(state: GameState, input: InputFrame, effects: GameEffect[]): void {
+  const level = getLevelDefinition(state.levelIndex);
   const relay = state.relay;
   const playerNearRelay = distanceSquared(state.player, relay) <= RELAY.interactionRadius * RELAY.interactionRadius;
-  const linkedToHeadquarters = distanceSquared(relay, HEADQUARTERS) <= RELAY.connectionRadius * RELAY.connectionRadius;
+  const linkedToHeadquarters = distanceSquared(relay, level.headquarters) <= RELAY.connectionRadius * RELAY.connectionRadius;
 
   if (!relay.installed) {
     relay.linkState = "disconnected";
@@ -258,13 +318,18 @@ function updateRelayAndMission(state: GameState, input: InputFrame, effects: Gam
   relay.jammedTicks = decrement(relay.jammedTicks);
   relay.linkState = relay.jammedTicks > 0 ? "jammed" : "normal";
 
-  if (state.packet.status === "carried" && playerNearRelay && relay.linkState === "normal" && input.interactHeld) {
+  const killGateOpen = state.stageKills >= level.requiredKills;
+  if (state.packet.status === "carried" && playerNearRelay && relay.linkState === "normal" && killGateOpen && input.interactHeld) {
     relay.uploadProgressTicks = Math.min(RELAY.uploadTicks, relay.uploadProgressTicks + 1);
     if (relay.uploadProgressTicks === RELAY.uploadTicks) {
       state.packet.status = "uploaded";
       state.uploadedPackets = 1;
-      state.mode = "won";
-      effects.push({ type: "upload-complete", x: relay.x, y: relay.y });
+      const remainingTicks = Math.max(0, level.missionSeconds * TICKS_PER_SECOND - state.elapsedTicks);
+      state.lastStageScore = 1000 + Math.ceil(remainingTicks / TICKS_PER_SECOND) * 10 + state.levelIndex * 300;
+      state.score += state.lastStageScore;
+      const finalLevel = state.levelIndex >= LEVEL_COUNT - 1;
+      state.mode = finalLevel ? "won" : "stage-cleared";
+      effects.push({ type: finalLevel ? "upload-complete" : "stage-cleared", x: relay.x, y: relay.y });
     }
   }
 }
@@ -287,6 +352,13 @@ export function stepGame(currentState: GameState, input: InputFrame): TickResult
   if (input.restartPressed || (currentState.mode === "menu" && input.startPressed)) {
     return { state: createGameState(currentState.seed, "playing"), effects: [] };
   }
+  if (currentState.mode === "stage-cleared" && input.startPressed) {
+    const nextState = createNextLevelState(currentState);
+    return {
+      state: nextState,
+      effects: [{ type: "stage-started", x: nextState.player.x, y: nextState.player.y }],
+    };
+  }
   if (input.pausePressed && currentState.mode === "paused") {
     currentState.mode = "playing";
     return { state: currentState, effects: [] };
@@ -298,18 +370,20 @@ export function stepGame(currentState: GameState, input: InputFrame): TickResult
   if (currentState.mode !== "playing") return { state: currentState, effects: [] };
 
   const effects: GameEffect[] = [];
+  const level = getLevelDefinition(currentState.levelIndex);
+  updateVisualEffects(currentState);
   currentState.tick += 1;
   currentState.elapsedTicks += 1;
   updatePlayer(currentState, input, effects);
   updateEnemies(currentState, effects);
-  if (currentState.mode !== "playing") return { state: currentState, effects };
+  if (currentState.mode !== "playing") return finishTick(currentState, effects);
   updateProjectiles(currentState, effects);
-  if (currentState.mode !== "playing") return { state: currentState, effects };
+  if (currentState.mode !== "playing") return finishTick(currentState, effects);
   updatePacket(currentState, effects);
   updateRelayAndMission(currentState, input, effects);
 
-  if (currentState.elapsedTicks >= MISSION_TICKS && currentState.mode === "playing") {
+  if (currentState.elapsedTicks >= level.missionSeconds * TICKS_PER_SECOND && currentState.mode === "playing") {
     currentState.mode = "lost";
   }
-  return { state: currentState, effects };
+  return finishTick(currentState, effects);
 }

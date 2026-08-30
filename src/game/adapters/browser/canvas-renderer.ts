@@ -1,5 +1,6 @@
-import { CITY_BLOCKS, HEADQUARTERS, ROAD_MARKS } from "../../content/level";
-import { MISSION_TICKS, PLAYER, RELAY, VIEW_HEIGHT, VIEW_WIDTH } from "../../content/balance";
+import { PLAYER, RELAY, VIEW_HEIGHT, VIEW_WIDTH } from "../../content/balance";
+import { getLevelDefinition, LEVEL_COUNT } from "../../content/level";
+import { TICKS_PER_SECOND } from "../../core/clock";
 import { distanceSquared, normalize } from "../../core/math";
 import type { EnemyState, GameState, LinkState, Vec2 } from "../../core/types";
 import { InputGlyphs, type InputGlyphId } from "./input-glyphs";
@@ -38,22 +39,31 @@ export class CanvasRenderer {
   }
 
   render(state: Readonly<GameState>): void {
-    this.drawBackdrop();
+    this.drawBackdrop(state);
+    const impact = state.visualEffects.find((effect) => effect.kind === "player-hit");
+    const shake = impact && !this.reducedMotion ? Math.max(0, 1 - impact.ageTicks / impact.durationTicks) * 5 : 0;
+    this.context.save();
+    if (shake > 0) this.context.translate(Math.sin(state.tick * 2.7) * shake, Math.cos(state.tick * 3.4) * shake);
     this.drawNetwork(state);
     this.drawWorldObjects(state);
     this.drawProjectiles(state);
     this.drawEnemies(state);
+    this.drawVisualEffects(state);
     if (state.mode !== "menu") this.drawPlayer(state);
+    this.context.restore();
     this.drawHud(state);
+    if (impact) this.drawDamageVignette(impact.ageTicks / impact.durationTicks);
 
     if (state.mode === "menu") this.drawMenu();
     if (state.mode === "paused") this.drawOverlay("SIGNAL PAUSED", "P  계속   ·   R  새 임무", COLORS.cyan);
+    if (state.mode === "stage-cleared") this.drawStageClear(state);
     if (state.mode === "won") this.drawResult(state, true);
     if (state.mode === "lost") this.drawResult(state, false);
   }
 
-  private drawBackdrop(): void {
+  private drawBackdrop(state: Readonly<GameState>): void {
     const context = this.context;
+    const level = getLevelDefinition(state.levelIndex);
     context.fillStyle = COLORS.void;
     context.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
     context.fillStyle = COLORS.city900;
@@ -64,7 +74,7 @@ export class CanvasRenderer {
     context.fillRect(242, 94, 222, 404);
     context.fillRect(678, 94, 82, 404);
 
-    for (const block of CITY_BLOCKS) {
+    for (const block of level.cityBlocks) {
       context.fillStyle = COLORS.city700;
       context.beginPath();
       context.roundRect(block.x, block.y, block.width, block.height, 10);
@@ -82,12 +92,14 @@ export class CanvasRenderer {
     }
 
     context.fillStyle = "rgba(71,97,109,0.42)";
-    for (const mark of ROAD_MARKS) context.fillRect(mark.x, mark.y, mark.width, mark.height);
+    for (const mark of level.roadMarks) context.fillRect(mark.x, mark.y, mark.width, mark.height);
+    context.fillStyle = `${level.accent}0c`;
+    context.fillRect(28, 82, VIEW_WIDTH - 56, VIEW_HEIGHT - 52);
   }
 
   private drawNetwork(state: Readonly<GameState>): void {
     if (!state.relay.installed) return;
-    this.drawLink(HEADQUARTERS, state.relay, state.relay.linkState, state.tick);
+    this.drawLink(getLevelDefinition(state.levelIndex).headquarters, state.relay, state.relay.linkState, state.tick);
     if (state.relay.linkState === "normal") {
       const context = this.context;
       context.fillStyle = "rgba(40,242,211,0.055)";
@@ -134,8 +146,9 @@ export class CanvasRenderer {
 
   private drawHeadquarters(state: Readonly<GameState>): void {
     const context = this.context;
+    const headquarters = getLevelDefinition(state.levelIndex).headquarters;
     context.save();
-    context.translate(HEADQUARTERS.x, HEADQUARTERS.y);
+    context.translate(headquarters.x, headquarters.y);
     context.fillStyle = "rgba(255,157,61,0.10)";
     context.strokeStyle = COLORS.orange;
     context.lineWidth = 3;
@@ -163,6 +176,7 @@ export class CanvasRenderer {
   private drawRelay(state: Readonly<GameState>): void {
     const context = this.context;
     const relay = state.relay;
+    const level = getLevelDefinition(state.levelIndex);
     context.save();
     context.translate(relay.x, relay.y);
 
@@ -205,7 +219,13 @@ export class CanvasRenderer {
       this.drawWorldLabel("E 길게 눌러 수리", 0, 52, COLORS.white);
     } else if (playerNear && state.packet.status === "carried") {
       this.drawProgressRing(relay.uploadProgressTicks / RELAY.uploadTicks, COLORS.white, 38);
-      this.drawWorldLabel(relay.linkState === "normal" ? "E 길게 눌러 업로드" : "링크 복구 대기", 0, 56, COLORS.white);
+      const killGateOpen = state.stageKills >= level.requiredKills;
+      const label = relay.linkState !== "normal"
+        ? "링크 복구 대기"
+        : killGateOpen
+          ? "E 길게 눌러 업로드"
+          : `위협 제거 ${state.stageKills}/${level.requiredKills}`;
+      this.drawWorldLabel(label, 0, 56, killGateOpen ? COLORS.white : COLORS.red);
     }
     context.restore();
   }
@@ -333,6 +353,81 @@ export class CanvasRenderer {
     context.fillRect(enemy.x - 18, enemy.y - enemy.radius - 12, 36 * ratio, 4);
   }
 
+  private drawVisualEffects(state: Readonly<GameState>): void {
+    const context = this.context;
+    for (const effect of state.visualEffects) {
+      const progress = effect.ageTicks / effect.durationTicks;
+      const alpha = Math.max(0, 1 - progress);
+      context.save();
+      context.translate(effect.x, effect.y);
+      context.globalAlpha = alpha;
+
+      if (effect.kind === "muzzle") {
+        context.strokeStyle = COLORS.orange;
+        context.lineWidth = 3;
+        for (let ray = 0; ray < 5; ray += 1) {
+          const angle = ray * Math.PI * 2 / 5 + state.tick * 0.17;
+          context.beginPath();
+          context.moveTo(Math.cos(angle) * 6, Math.sin(angle) * 6);
+          context.lineTo(Math.cos(angle) * (18 + progress * 12), Math.sin(angle) * (18 + progress * 12));
+          context.stroke();
+        }
+      } else if (effect.kind === "impact" || effect.kind === "player-hit") {
+        context.strokeStyle = effect.kind === "player-hit" ? COLORS.red : COLORS.white;
+        context.lineWidth = effect.kind === "player-hit" ? 4 : 2.5;
+        for (let ray = 0; ray < 8; ray += 1) {
+          const angle = ray * Math.PI / 4 + effect.id * 0.31;
+          const inner = 5 + progress * 12;
+          const outer = 16 + progress * 28;
+          context.beginPath();
+          context.moveTo(Math.cos(angle) * inner, Math.sin(angle) * inner);
+          context.lineTo(Math.cos(angle) * outer, Math.sin(angle) * outer);
+          context.stroke();
+        }
+      } else if (effect.kind === "enemy-destroyed") {
+        context.strokeStyle = COLORS.red;
+        context.lineWidth = 4;
+        context.beginPath();
+        context.arc(0, 0, 12 + progress * 42, 0, Math.PI * 2);
+        context.stroke();
+        context.strokeStyle = COLORS.orange;
+        context.lineWidth = 2;
+        for (let shard = 0; shard < 10; shard += 1) {
+          const angle = shard * Math.PI / 5 + effect.id * 0.13;
+          context.beginPath();
+          context.moveTo(Math.cos(angle) * (10 + progress * 18), Math.sin(angle) * (10 + progress * 18));
+          context.lineTo(Math.cos(angle) * (18 + progress * 54), Math.sin(angle) * (18 + progress * 54));
+          context.stroke();
+        }
+      } else if (effect.kind === "emp") {
+        context.strokeStyle = COLORS.magenta;
+        context.lineWidth = 6 - progress * 4;
+        context.beginPath();
+        context.arc(0, 0, PLAYER.empRadius * progress, 0, Math.PI * 2);
+        context.stroke();
+      } else if (effect.kind === "dash") {
+        context.strokeStyle = COLORS.orange;
+        context.lineWidth = 4;
+        context.setLineDash([8, 8]);
+        context.beginPath();
+        context.arc(0, 0, 18 + progress * 36, 0, Math.PI * 2);
+        context.stroke();
+      } else {
+        const upload = effect.kind === "upload-burst";
+        context.strokeStyle = upload ? COLORS.cyan : state.relay.linkState === "jammed" ? COLORS.magenta : COLORS.orange;
+        context.lineWidth = upload ? 5 : 3;
+        for (const offset of [0, 22, 44]) {
+          const radius = 18 + progress * (upload ? 130 : 70) + offset;
+          context.globalAlpha = alpha * Math.max(0, 1 - offset / 64);
+          context.beginPath();
+          context.arc(0, 0, radius, 0, Math.PI * 2);
+          context.stroke();
+        }
+      }
+      context.restore();
+    }
+  }
+
   private drawPlayer(state: Readonly<GameState>): void {
     const context = this.context;
     const player = state.player;
@@ -371,6 +466,23 @@ export class CanvasRenderer {
     context.fill();
     context.restore();
 
+    context.save();
+    context.translate(player.x + player.facingX * 72, player.y + player.facingY * 72);
+    context.strokeStyle = player.overheated ? COLORS.red : COLORS.orange;
+    context.lineWidth = 2;
+    context.beginPath();
+    context.arc(0, 0, 8, 0, Math.PI * 2);
+    context.moveTo(-14, 0);
+    context.lineTo(-6, 0);
+    context.moveTo(6, 0);
+    context.lineTo(14, 0);
+    context.moveTo(0, -14);
+    context.lineTo(0, -6);
+    context.moveTo(0, 6);
+    context.lineTo(0, 14);
+    context.stroke();
+    context.restore();
+
     if (player.empPulseTicks > 0) {
       const ratio = 1 - player.empPulseTicks / 24;
       context.strokeStyle = `rgba(240,75,226,${0.9 - ratio * 0.8})`;
@@ -381,8 +493,19 @@ export class CanvasRenderer {
     }
   }
 
+  private drawDamageVignette(progress: number): void {
+    const context = this.context;
+    const alpha = Math.max(0, 1 - progress) * 0.48;
+    const gradient = context.createRadialGradient(VIEW_WIDTH / 2, VIEW_HEIGHT / 2, 150, VIEW_WIDTH / 2, VIEW_HEIGHT / 2, 540);
+    gradient.addColorStop(0, "rgba(255,77,109,0)");
+    gradient.addColorStop(1, `rgba(255,77,109,${alpha})`);
+    context.fillStyle = gradient;
+    context.fillRect(0, 0, VIEW_WIDTH, VIEW_HEIGHT);
+  }
+
   private drawHud(state: Readonly<GameState>): void {
     const context = this.context;
+    const level = getLevelDefinition(state.levelIndex);
     context.fillStyle = "rgba(5,10,16,0.94)";
     context.fillRect(0, 0, VIEW_WIDTH, 82);
     context.strokeStyle = COLORS.city500;
@@ -395,7 +518,7 @@ export class CanvasRenderer {
     this.drawMeter(28, 25, 174, 12, state.player.health / state.player.maxHealth, COLORS.red, "HP");
     this.drawMeter(28, 54, 174, 10, state.player.heat, state.player.overheated ? COLORS.red : COLORS.orange, "HEAT");
 
-    const remainingTicks = Math.max(0, MISSION_TICKS - state.elapsedTicks);
+    const remainingTicks = Math.max(0, level.missionSeconds * TICKS_PER_SECOND - state.elapsedTicks);
     const seconds = Math.ceil(remainingTicks / 60);
     const timeText = `${String(Math.floor(seconds / 60)).padStart(2, "0")}:${String(seconds % 60).padStart(2, "0")}`;
     context.textAlign = "center";
@@ -404,15 +527,16 @@ export class CanvasRenderer {
     context.fillText(timeText, VIEW_WIDTH / 2, 46);
     context.fillStyle = COLORS.city500;
     context.font = "500 14px Oxanium, system-ui, sans-serif";
-    context.fillText("M1 SIGNAL WINDOW", VIEW_WIDTH / 2, 67);
+    context.fillText(`${level.signal} · ${level.name} · ${level.difficulty}`, VIEW_WIDTH / 2, 67);
 
     context.textAlign = "right";
     context.fillStyle = COLORS.white;
     context.font = "600 18px Noto Sans KR, system-ui, sans-serif";
-    context.fillText(`업로드 ${state.uploadedPackets}/1`, 928, 32);
+    context.fillText(`업로드 ${state.uploadedPackets}/1 · 적 ${state.enemies.length}`, 928, 30);
     context.fillStyle = state.packet.status === "carried" ? COLORS.white : COLORS.city500;
     context.font = "600 15px Noto Sans KR, system-ui, sans-serif";
-    context.fillText(state.packet.status === "carried" ? "◆ 패킷 운반 중" : "◇ 패킷 회수 필요", 928, 58);
+    const packetText = state.packet.status === "carried" ? "◆ 운반 중" : state.packet.status === "uploaded" ? "◆ 전송 완료" : "◇ 회수 필요";
+    context.fillText(`${packetText} · SCORE ${String(state.score).padStart(6, "0")}`, 928, 57);
 
     const dashReady = state.player.dashCooldownTicks === 0;
     const empReady = state.player.empCooldownTicks === 0;
@@ -424,6 +548,11 @@ export class CanvasRenderer {
     context.fillText(`RMB EMP ${empReady ? "READY" : (state.player.empCooldownTicks / 60).toFixed(1)}`, 612, 527);
 
     this.drawLinkLegend(state.relay.linkState);
+
+    context.textAlign = "right";
+    context.font = "600 11px Oxanium, system-ui, sans-serif";
+    context.fillStyle = state.stageKills >= level.requiredKills ? COLORS.cyan : COLORS.red;
+    context.fillText(`THREAT ${state.stageKills}/${level.requiredKills}`, 925, 510);
   }
 
   private drawLinkLegend(active: LinkState): void {
@@ -462,7 +591,7 @@ export class CanvasRenderer {
     context.fillText("SIGNAL COURIER", VIEW_WIDTH / 2, 164);
     context.fillStyle = COLORS.white;
     context.font = "600 19px Noto Sans KR, system-ui, sans-serif";
-    context.fillText("2분 안에 중계기를 설치하고 패킷을 업로드하라", VIEW_WIDTH / 2, 203);
+    context.fillText("서로 다른 3개 구역을 연결하고 최종 패킷을 전달하라", VIEW_WIDTH / 2, 203);
 
     const controls: Array<{ glyph: string; label: string }> = [
       { glyph: "wasd", label: "이동" },
@@ -486,20 +615,39 @@ export class CanvasRenderer {
     });
     context.fillStyle = COLORS.orange;
     context.font = "600 22px Oxanium, system-ui, sans-serif";
-    context.fillText("ENTER TO DEPLOY", VIEW_WIDTH / 2, 431);
+    context.fillText("ENTER TO START SIGNAL RUN", VIEW_WIDTH / 2, 431);
     context.fillStyle = COLORS.city500;
     context.font = "500 14px Noto Sans KR, system-ui, sans-serif";
-    context.fillText("청록 실선=정상  ·  자홍 파선=교란  ·  회색 긴 파선=단절", VIEW_WIDTH / 2, 471);
+    context.fillText("구역마다 제한 시간·위협 수·공격 빈도가 상승한다", VIEW_WIDTH / 2, 471);
   }
 
-  private drawResult(state: Readonly<GameState>, success: boolean): void {
-    const color = success ? COLORS.cyan : COLORS.red;
-    this.drawOverlay(success ? "PACKET DELIVERED" : "SIGNAL LOST", "R  같은 시드 재시작", color);
+  private drawStageClear(state: Readonly<GameState>): void {
+    const level = getLevelDefinition(state.levelIndex);
+    this.drawOverlay("SECTOR LINKED", "ENTER  다음 구역 진입   ·   R  런 재시작", level.accent);
     const context = this.context;
     context.textAlign = "center";
     context.fillStyle = COLORS.white;
     context.font = "600 17px Noto Sans KR, system-ui, sans-serif";
-    context.fillText(`업로드 ${state.uploadedPackets}/1  ·  생존 시간 ${(state.elapsedTicks / 60).toFixed(1)}초`, VIEW_WIDTH / 2, 326);
+    context.fillText(`${level.name} 완료  ·  +${state.lastStageScore}  ·  누적 ${state.score}`, VIEW_WIDTH / 2, 326);
+    context.fillStyle = COLORS.city500;
+    context.font = "500 14px Oxanium, system-ui, sans-serif";
+    context.fillText(`SECTOR ${state.levelIndex + 1}/${LEVEL_COUNT}  ·  THREATS ${state.stageKills}`, VIEW_WIDTH / 2, 354);
+  }
+
+  private drawResult(state: Readonly<GameState>, success: boolean): void {
+    const color = success ? COLORS.cyan : COLORS.red;
+    this.drawOverlay(success ? "NETWORK RESTORED" : "SIGNAL LOST", "R  같은 시드로 전체 런 재시작", color);
+    const context = this.context;
+    context.textAlign = "center";
+    context.fillStyle = COLORS.white;
+    context.font = "600 17px Noto Sans KR, system-ui, sans-serif";
+    context.fillText(
+      success
+        ? `3/3 구역 연결  ·  SCORE ${state.score}  ·  처치 ${state.totalKills}`
+        : `${getLevelDefinition(state.levelIndex).name}에서 신호 소실  ·  SCORE ${state.score}`,
+      VIEW_WIDTH / 2,
+      326,
+    );
   }
 
   private drawOverlay(title: string, subtitle: string, color: string): void {

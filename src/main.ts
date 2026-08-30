@@ -9,6 +9,7 @@ declare global {
   interface Window {
     render_game_to_text: () => string;
     advanceTime: (milliseconds: number) => void;
+    capture_gameplay_media_stream: () => MediaStream;
   }
 }
 
@@ -72,6 +73,11 @@ window.render_game_to_text = () => renderTextState(runtime.getState());
 window.advanceTime = (milliseconds: number): void => {
   runtime.advanceAutomation(milliseconds);
   render();
+};
+window.capture_gameplay_media_stream = (): MediaStream => {
+  const stream = canvas.captureStream(60);
+  for (const track of audio.getCaptureStream().getAudioTracks()) stream.addTrack(track);
+  return stream;
 };
 
 render();

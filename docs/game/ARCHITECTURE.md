@@ -48,9 +48,11 @@ window.render_game_to_text(): string
 window.advanceTime(milliseconds: number): void
 ```
 
-`render_game_to_text`는 schema, seed, tick, 좌표계, 플레이어, 패킷, 중계기, 탈출과 가까운 위협을 JSON으로 반환한다. 회귀용 canonical serializer와 hash는 표시용 반올림 값에서 분리한다.
+`render_game_to_text`는 schema, seed, tick, 좌표계, 구역·난이도·점수, 플레이어, 패킷, 중계기, 엄폐물, 위협과 현재 시각 효과를 JSON으로 반환한다. 회귀용 canonical serializer와 hash는 표시용 반올림 값에서 분리한다.
 
 `advanceTime`은 automation accumulator에 시간을 더해 완성된 tick만 진행하고 소수 잔여를 보존한다. 0ms는 0 tick이며 automation mode에서 rAF는 상태를 동시에 진행하지 않는다.
+
+README 플레이 증거를 만들 때는 `window.capture_gameplay_media_stream()`이 Canvas `captureStream(60)`과 절차 합성 음향의 `MediaStreamAudioDestinationNode`를 하나의 `MediaStream`으로 묶는다. 출력용 compressor 뒤 신호를 스피커와 녹화 destination에 동시에 연결하므로 실제 플레이와 녹화가 같은 음향 사건을 사용한다. 이 API는 게임 상태를 변경하지 않는다.
 
 현재 상태 hash는 표시용 반올림과 효과음을 제외한 권위 상태를 고정 필드 순서로 직렬화한 뒤 FNV-1a 32-bit로 계산한다. 같은 seed와 tick별 `InputFrame`을 10회 재생하는 Vitest가 동일 hash를 검증한다.
 
@@ -66,17 +68,18 @@ window.advanceTime(milliseconds: number): void
 
 빈 구조를 한 번에 만들지 않는다. M1에서 `state/commands` → `clock` → `movement` → `canvas-renderer` → `automation` 순으로 기존 동작을 보존한 뒤 combat과 relay를 추가한다. 최종 목표 구조는 기술 계획의 `src/game/core`, `model`, `systems`, `content`, `ports`, `adapters/browser`, `debug` 경계를 따른다.
 
-## M1 구현 상태
+## 현재 구현 상태
 
 - `src/game/core`: 수학, 60Hz accumulator, uint32 seed PRNG, 직렬화 타입
-- `src/game/model`: `GameState`, `InputFrame`, 시드 기반 초기 상태
-- `src/game/systems/simulation.ts`: 이동·대시·과열 사격·EMP·추격자·사수·중계기·패킷·업로드의 유일한 권위 step
+- `src/game/model`: `GameState`, `InputFrame`, 시드 기반 초기 상태와 구역 간 점수·체력 승계
+- `src/game/content/level.ts`: 세 구역의 목표·엄폐·적 배치·제한 시간·난이도 카탈로그
+- `src/game/systems/simulation.ts`: 이동·엄폐 충돌·대시·과열 사격·EMP·추격자·사수·중계기·패킷·3구역 전환·점수·FX 수명의 유일한 권위 step
 - `src/game/runtime.ts`: rAF와 자동화가 공유하는 clock/input/effect 조립
-- `src/game/adapters/browser`: DOM 입력, Canvas 읽기 전용 renderer, 절차 합성 음향, 입력 글리프 로더
+- `src/game/adapters/browser`: DOM 입력, 구역·전투 FX를 그리는 Canvas 읽기 전용 renderer, 압축기 기반 절차 합성 음향, 입력 글리프 로더
 - `src/game/debug`: canonical serializer/hash와 텍스트 상태
 - `src/assets`: Vite build graph에 들어가는 로컬 입력 글리프·폰트와 런타임 manifest
 
-순수 코어는 DOM, Canvas, AudioContext, localStorage, `performance.now()`를 import하지 않는다. Node 통합 테스트는 browser adapter를 로드하지 않고 동일한 `stepGame`만으로 2분 수직 흐름을 끝낸다.
+순수 코어는 DOM, Canvas, AudioContext, localStorage, `performance.now()`를 import하지 않는다. Node 통합 테스트는 browser adapter를 로드하지 않고 동일한 `stepGame`만으로 세 구역 전환과 최종 승리를 검증한다.
 
 생산 빌드는 `vite.config.ts`의 상대 base(`./`)를 사용해 정적 호스팅의 저장소 서브경로에서도 자산을 찾는다. 같은 설정은 크레딧, 에셋 manifest, Kenney CC0 고지와 두 OFL 원문을 `dist/licenses/`에 byte 그대로 방출하며 `scripts/verify-build.mjs`가 상대 URL과 원본 일치를 검사한다.
 
